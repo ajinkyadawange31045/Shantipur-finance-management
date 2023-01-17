@@ -33,7 +33,7 @@ def user_login(request):
                     return HttpResponsePermanentRedirect('/')
         else:
             form = LoginForm()
-        return render(request,'blog/login.html',{'form':form})
+        return render(request,'login.html',{'form':form})
     else:
         return HttpResponseRedirect('/')
 
@@ -43,10 +43,10 @@ def user_signup(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            messages.success(request,'Congratulations!! You have became an author')
+            messages.success(request,'Congratulations!! successfullly signed in')
             user = form.save()
             # group = Group.objects.get(name ='Author')
             # user.groups.add(group)
     else:
         form = SignUpForm()
-    return render(request,'blog/signup.html',{'form':form})
+    return render(request,'signup.html',{'form':form})
