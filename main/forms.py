@@ -7,8 +7,11 @@ from .models import Post
 class PostForm(forms.ModelForm):
     class Meta:
         model  = Post
-        fields = ['user','category','desc','amount_taken','amount_used','date','bill']
+        fields = ['category','desc','amount_taken','amount_used','date','bill']
         labels = {'desc':'Breif about purchased things'}
         widgets = {
             # 'title':forms.TextInput(attrs = {'class':'form-control'}),
-        'desc':forms.Textarea(attrs = {'class':'form-control'}),}
+        'desc':forms.Textarea(attrs = {'class':'form-control','rows':4, 'cols':15}),
+        
+        
+        }

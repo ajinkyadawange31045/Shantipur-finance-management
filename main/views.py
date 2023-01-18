@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group
 
 #home
 def home(request):
-    posts = Post.objects.all().filter(status=True)
+    posts = Post.objects.all().filter(status=True).order_by('-id')
     # a = Post.objects.all().amount_taken()
     # print(a)
     # print(posts)
@@ -32,7 +32,7 @@ def about(request):
 #dashboard
 def dashboard(request):
     if request.user.is_authenticated:
-        posts = Post.objects.all()
+        posts = Post.objects.all().order_by('remaining')
         user = request.user
         full_name = user.get_full_name()
         gps = user.groups.all()
@@ -46,14 +46,14 @@ def add_post(request):
         if request.method == 'POST':
             form = PostForm(request.POST)
             if form.is_valid():
-                user = form.cleaned_data['user']
+                # user = form.cleaned_data['user']
                 category = form.cleaned_data['category']
                 # title = form.cleaned_data['title']
                 amount_taken = form.cleaned_data['amount_taken']
                 amount_used = form.cleaned_data['amount_used']
                 desc = form.cleaned_data['desc']
                 
-                pst = Post(user=user,category=category,amount_taken=amount_taken,amount_used=amount_used, desc = desc)
+                pst = Post(category=category,amount_taken=amount_taken,amount_used=amount_used, desc = desc)
                 pst.user = request.user
 
                 pst.save()

@@ -5,7 +5,8 @@
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-{% endfor %} {% endif %} {% endblock msg %} 
+
+{% endfor %} {% endif %} {% endblock msg %}
 <!-- <div class="col-sm-2 text-white my-5 text-center">
     <h4 class="my-5">Profile</h4>
     <h5>
@@ -18,9 +19,47 @@
     {% endfor %}
 
 </div> -->
- {% block content %}
 
-<div class="table-responsive">
+
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js">
+</script>
+<style>
+    .block_ard {
+        display: none;
+        /* font-size: 20px; */
+    }
+    
+.load_more
+{
+	margin-top: 80px;
+	margin-bottom: 140px;
+}
+.load_more_button
+{
+	width: 118px;
+	height: 36px;
+	background: transparent;
+	border: solid 1px #d7d7d7;
+	border-radius: 18px;
+	margin: 0 auto;
+	line-height: 32px;
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.5);
+	cursor: pointer;
+}
+.load_more_button:hover
+{
+	background: #d7d7d7;
+    color: black;
+}
+</style>
+<div class="table-responsive my-4">
     <h3 class="text-white mt-5">Dashboard Page</h3>
     <a href="{% url 'addpost' %}" class="btn btn-success">Add Entry</a>
     <h6 class="text-center alert alert-info mt-3">Show Post Information</h6>
@@ -28,18 +67,23 @@
 
     {% if posts %}
     <table class="table align-middle mb-0 bg-white">
-        <thead class="bg-light">
+        <thead class="" style="color: rgb(6, 5, 5); background-color: rgb(67, 213, 86);">
             <tr>
+                <th>Id</th>
                 <th>Name</th>
-                <!-- <th>Category</th> -->
                 <th>To_be_returned</th>
+                <th>Bill</th>
+                <th>Category</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
             {%for p in posts %}
-            <tr>
+            <tr class="block_ard">
+                <td>
+                    <p>{{p.id}}</p>
+                </td>
                 <td>
                     <div class="d-flex align-items-center">
                         <!-- <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" alt=""
@@ -50,21 +94,25 @@
                         </div>
                     </div>
                 </td>
-                
+
                 <td>
 
-                    {{ p.to_be_returned }} Rs.
+                   <p> {{ p.to_be_returned }} Rs.</p>
 
                 </td>
-
+                <td> {% if p.bill %}
+                    <!-- <p style="color: green;">Bill is there</p> -->
+                    <!-- <i class="fa-solid fa-square-check"></i> -->
+                    <!-- <i class="fa-regular fa-square-check"></i> -->
+                    <img width="24px" height="auto" src="{% static 'images/square-check-regular.svg' %}" alt="">
+                    {% else %}
+                    <img width="24px" height="auto" src="{% static 'images/square-regular.svg' %}" alt="">
+                    <p style="color: red;"> </p>
+                    {% endif %}
+                </td>
                 <td>
                     <p class="fw-normal mb-1">{{p.category}}</p>
-                    <!-- <p class="fw-normal mb-1">{{p.status}}</p> -->
-                    {% if p.bill %}
-                        <p style="color: green;">Bill is there</p>
-                        {% else %}
-                        <p style="color: red;">Not bill</p>
-                        {% endif %}
+
                 </td>
 
                 <td>
@@ -77,8 +125,9 @@
 
                 </td>
 
-                <td class="text-center">
-                    <a href="{% url 'updatepost' p.id %}" class="btn btn-warning btn-sm">Edit</a> {% if perms.blog.delete_post %}
+                <td class="">
+                    <a href="{% url 'updatepost' p.id %}" class="btn btn-warning btn-sm">Edit</a> 
+                    {% if perms.blog.delete_post %}
 
                     <form action="{% url 'deletepost' p.id %}" method="post" class="d-inline">{% csrf_token %}
                         <input type="submit" class="btn btn-danger btn-sm" value="Delete"> {% endif %}
@@ -91,10 +140,25 @@
     {% else %}
     <h4 class="text-center alert alert-warning">No records</h4>
     {% endif %}
-
-
-
-
-
+    <div class="text-center load_more my-2 " >
+        <div id="load" class="load_more_button text-center trans_200">Load More</div>
+    </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $(".block_ard").slice(0,10).show();
+        if($(".block_ard:hidden").length!=0) {
+            $("#load").show();
+        }
+        $("#load").on("click",function(e) {
+            e.preventDefault();
+            $(".block_ard:hidden").slice(0,5).slideDown();
+            if($(".block_ard:hidden").length==0) {
+                $("#load").text("No More to view")
+                    .fadOut("slow");
+            }
+        });
+    })
+</script>
 {% endblock content %}
