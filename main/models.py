@@ -31,8 +31,8 @@ class Post(models.Model):
     # title = models.CharField(max_length=150,null=True)
     amount_taken = models.BigIntegerField()
     amount_used = models.BigIntegerField()
-    
-    date = models.DateField(default = now,null=True)
+    # x = models.DateTimeField()
+    date = models.DateTimeField(default = now,null=True)
     desc = models.TextField(null=True)
     # bill = models.CharField(max_length=100,choices=PICK)
     bill = models.BooleanField(default=False)
