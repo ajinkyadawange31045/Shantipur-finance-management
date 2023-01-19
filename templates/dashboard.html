@@ -126,13 +126,15 @@
                 </td>
 
                 <td class="">
+                    {% if request.user == p.user or perms.blog.change_post %}
                     <a href="{% url 'updatepost' p.id %}" class="btn btn-warning btn-sm">Edit</a> 
+                    {% endif %}
                     {% if perms.blog.delete_post %}
-
                     <form action="{% url 'deletepost' p.id %}" method="post" class="d-inline">{% csrf_token %}
                         <input type="submit" class="btn btn-danger btn-sm" value="Delete"> {% endif %}
                     </form>
                 </td>
+                
             </tr>
             {%endfor%}
         </tbody>

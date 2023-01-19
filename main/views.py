@@ -40,46 +40,61 @@ def dashboard(request):
     else:
         return HttpResponseRedirect('/login/')
 
-#add new post
+from django.shortcuts import render, HttpResponseRedirect
+from .forms import PostForm
+from .models import Post
+
 def add_post(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            form = PostForm(request.POST)
+            form = PostForm(request.POST,user=request.user)
             if form.is_valid():
-                # user = form.cleaned_data['user']
-                category = form.cleaned_data['category']
-                # title = form.cleaned_data['title']
-                amount_taken = form.cleaned_data['amount_taken']
-                amount_used = form.cleaned_data['amount_used']
-                desc = form.cleaned_data['desc']
-                
-                pst = Post(category=category,amount_taken=amount_taken,amount_used=amount_used, desc = desc)
-                pst.user = request.user
-
-                pst.save()
-                return HttpResponseRedirect('/')
-
+                post = form.save(commit=False)
+                post.user = request.user
+                post.save()
+                return HttpResponseRedirect('/dashboard/')
         else:
-            form = PostForm()
+            form = PostForm(user=request.user)
         return render(request,'addpost.html',{'form':form})
     else:
         return HttpResponseRedirect('/login/')
 
-#update new post
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from .forms import PostForm
+from .models import Post
+
 def update_post(request,id):
+    post = Post.objects.get(pk=id)
     if request.user.is_authenticated:
-        if request.method == "POST":
-            pi = Post.objects.get(pk=id)
-            form = PostForm(request.POST, instance=pi)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect('/dashboard/')
+        if request.user == post.user or request.user.is_staff:
+            if request.method == "POST":
+                form = PostForm(request.POST, instance=post,user=request.user)
+                if form.is_valid():
+                    form.save()
+                    return HttpResponseRedirect('/dashboard/')
+            else:
+                form = PostForm(instance=post,user=request.user)
+            return render(request,'updatepost.html',{'form':form})
         else:
-            pi = Post.objects.get(pk=id)
-            form = PostForm(instance=pi)
-        return render(request,'updatepost.html',{'form':form})
+            return HttpResponseRedirect('/dashboard/')
     else:
         return HttpResponseRedirect('/login/')
+
+# def update_post(request, id):
+#     post = get_object_or_404(Post, id=id)
+#     # Check if the current user is the creator of the post or if they are an admin user
+#     if request.user != post.user and not request.user.is_superuser:
+#         return HttpResponseRedirect('/dashboard/') # or return a 403 error
+#     if request.method == "POST":
+#         form = PostForm(request.POST, instance=post,user=request.user)
+#         if form.is_valid():
+#             form.save()
+#             return HttpResponseRedirect('/dashboard/')
+#     else:
+#         form = PostForm(instance=post,user=request.user)
+#     return render(request, 'updatepost.html', {'form': form})
+
+
 
 #delete new post
 def delete_post(request,id):
