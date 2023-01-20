@@ -37,6 +37,8 @@
 }
 </style>
 <div class="table-responsive mt-3">
+    <h3>Shantipur money management</h3>
+    <h6>Try to bring Bills compulsorily</h6>
     <div class="d-flex">
         
     <a href="{% url 'addpost' %}" class="btn btn-success align-items-end my-3 mx-1">Add Entry</a>
@@ -54,7 +56,8 @@
                 <th>Amount_used</th>
                 <th>Bill</th>
                 <th>To_be_returned</th>
-                <th>Status</th>
+                <th>Figured_out</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -105,12 +108,18 @@
                     <!-- {{p.remaining}} -->
                     <p>
                         {% if p.remaining %}
-                    <p style="color: green;">Paid</p>
+                    <p style="color: green;">Yes</p>
                     {% else %}
-                    <p style="color: red;">Not paid</p>
+                    <p style="color: red;">Not yet</p>
                     {% endif %}
                     </p>
 
+                </td>
+                <td class="">
+                    {% if request.user == p.user or perms.blog.change_post %}
+                    <a href="{% url 'updatepost' p.id %}" class="btn btn-warning btn-sm">Edit</a> 
+                    {% endif %}
+                   
                 </td>
                 
             </tr>
@@ -128,13 +137,13 @@
 
 <script>
     $(document).ready(function() {
-        $(".block_ard").slice(0,10).show();
+        $(".block_ard").slice(0,7).show();
         if($(".block_ard:hidden").length!=0) {
             $("#load").show();
         }
         $("#load").on("click",function(e) {
             e.preventDefault();
-            $(".block_ard:hidden").slice(0,5).slideDown();
+            $(".block_ard:hidden").slice(0,3).slideDown();
             if($(".block_ard:hidden").length==0) {
                 $("#load").text("No More to view")
                     .fadOut("slow");
