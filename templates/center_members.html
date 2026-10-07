@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-12 my-4">
+    <!-- Center Navigation Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="text-white mb-0">
+                Manage Members — <span class="text-info">{{ center.name }}</span>
+            </h3>
+            <p class="text-muted small mb-0">Invite new volunteers by email or manage existing members and their center roles</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'dashboard' %}?center={{ center.id }}" class="btn btn-outline-secondary btn-sm">&larr; Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Invite by Email Card -->
+        <div class="col-lg-6">
+            <div class="card bg-dark text-white border-secondary h-100 shadow-sm">
+                <div class="card-header border-secondary bg-transparent py-3">
+                    <h5 class="mb-1 text-light">Invite by Email</h5>
+                    <small class="text-muted">Generates a single-use, 7-day expiring invitation token. Unregistered recipients can sign up with this invitation.</small>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'invite_volunteer' center.id %}" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label text-light" for="id_email">Volunteer Email Address <span class="text-danger">*</span></label>
+                            {{ invite_form.email }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light" for="id_role">Center Role</label>
+                            {{ invite_form.role }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create & Send Invitation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Existing Account Card -->
+        <div class="col-lg-6">
+            <div class="card bg-dark text-white border-secondary h-100 shadow-sm">
+                <div class="card-header border-secondary bg-transparent py-3">
+                    <h5 class="mb-1 text-light">Add Existing Account by Username</h5>
+                    <small class="text-muted">Search an existing user by their exact username to grant or modify membership.</small>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'center_members' center.id %}" class="d-flex gap-2 mb-3">
+                        <input type="text" name="search_username" class="form-control" placeholder="Search exact username..." value="{{ search_query|default:'' }}" required>
+                        <button type="submit" class="btn btn-outline-info">Search</button>
+                        {% if search_query %}
+                            <a href="{% url 'center_members' center.id %}" class="btn btn-outline-secondary">Clear</a>
+                        {% endif %}
+                    </form>
+
+                    {% if searched_user %}
+                        <div class="p-3 border border-secondary rounded bg-black bg-opacity-25 mt-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <h6 class="mb-0 text-info fw-bold">{{ searched_user.display_name }}</h6>
+                                    <small class="text-muted">Username: <code>{{ searched_user.username }}</code></small>
+                                </div>
+                                <div>
+                                    {% if searched_membership and searched_membership.is_active %}
+                                        <span class="badge bg-success">Active Member ({{ searched_membership.get_role_display }})</span>
+                                    {% elif searched_membership %}
+                                        <span class="badge bg-danger">Revoked / Inactive</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Not a Member</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% if searched_membership and searched_membership.is_active %}
+                                <form method="post" action="{% url 'change_member_role' center.id searched_membership.id %}" class="d-flex gap-2 align-items-center mt-3">
+                                    {% csrf_token %}
+                                    <label class="small text-muted mb-0">Role:</label>
+                                    <select name="role" class="form-select form-select-sm" style="max-width: 180px;">
+                                        {% for role_code, role_label in role_choices %}
+                                            <option value="{{ role_code }}" {% if searched_membership.role == role_code %}selected{% endif %}>{{ role_label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn btn-outline-warning btn-sm">Update Role</button>
+                                </form>
+                            {% elif searched_membership %}
+                                <form method="post" action="{% url 'reactivate_user_membership' center.id searched_membership.id %}" class="mt-2">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">Reactivate Membership</button>
+                                </form>
+                            {% else %}
+                                <form method="post" action="{% url 'grant_user_membership' center.id %}" class="d-flex gap-2 align-items-center mt-3">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ searched_user.id }}">
+                                    <label class="small text-muted mb-0">Role:</label>
+                                    <select name="role" class="form-select form-select-sm" style="max-width: 180px;">
+                                        {% for role_code, role_label in role_choices %}
+                                            <option value="{{ role_code }}">{{ role_label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn btn-success btn-sm">Grant Membership</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active & Inactive Members List -->
+    <div class="card bg-dark text-white border-secondary mb-4 shadow-sm">
+        <div class="card-header border-secondary bg-transparent py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-light">Center Members</h5>
+            <span class="badge bg-secondary">{{ memberships.count }} Total</span>
+        </div>
+        <div class="card-body p-0">
+            {% if memberships %}
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <thead class="table-secondary text-dark">
+                            <tr>
+                                <th>Devotee / Username</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Member Since</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in memberships %}
+                            <tr>
+                                <td class="fw-bold">
+                                    <code>{{ m.user.username }}</code>
+                                    {% if m.user == request.user %}
+                                        <span class="badge bg-info text-dark ms-1">You</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ m.user.get_full_name|default:"-" }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'change_member_role' center.id m.id %}" class="d-inline-flex gap-1 align-items-center">
+                                        {% csrf_token %}
+                                        <select name="role" class="form-select form-select-sm bg-dark text-white border-secondary" style="font-size: 13px;" onchange="this.form.submit()">
+                                            {% for role_code, role_label in role_choices %}
+                                                <option value="{{ role_code }}" {% if m.role == role_code %}selected{% endif %}>{{ role_label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+                                </td>
+                                <td>
+                                    {% if m.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Revoked</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-muted small">{{ m.created_at|date:"M d, Y" }}</td>
+                                <td class="text-end">
+                                    {% if m.is_active %}
+                                        {% if m.user != request.user or request.user.is_superuser %}
+                                            <form method="post" action="{% url 'revoke_user_membership' center.id m.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Revoke membership for {{ m.user.username }}?');">
+                                                    Revoke
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="text-muted small fst-italic">Own Account</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <form method="post" action="{% url 'reactivate_user_membership' center.id m.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-success btn-sm">
+                                                Reactivate
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4 text-muted">
+                    <p class="mb-0">No members found for this center.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Email Invitations List -->
+    <div class="card bg-dark text-white border-secondary shadow-sm">
+        <div class="card-header border-secondary bg-transparent py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-light">Email Invitations</h5>
+            <span class="badge bg-secondary">{{ invitations.count }} Total</span>
+        </div>
+        <div class="card-body p-0">
+            {% if invitations %}
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <thead class="table-secondary text-dark">
+                            <tr>
+                                <th>Invited Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Invited By</th>
+                                <th>Expires On</th>
+                                <th>Accepted By</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inv in invitations %}
+                            <tr>
+                                <td class="fw-bold">{{ inv.email }}</td>
+                                <td><span class="badge bg-secondary">{{ inv.get_role_display }}</span></td>
+                                <td>
+                                    {% if inv.status == 'PENDING' %}
+                                        {% if inv.is_expired %}
+                                            <span class="badge bg-secondary">Expired</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% endif %}
+                                    {% elif inv.status == 'ACCEPTED' %}
+                                        <span class="badge bg-success">Accepted</span>
+                                    {% elif inv.status == 'REVOKED' %}
+                                        <span class="badge bg-danger">Revoked</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ inv.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-muted small">{{ inv.invited_by.username }}</td>
+                                <td class="text-muted small">{{ inv.expires_at|date:"M d, Y H:i" }}</td>
+                                <td class="small">
+                                    {% if inv.accepted_by %}
+                                        <code>{{ inv.accepted_by.username }}</code>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    {% if inv.status == 'PENDING' and not inv.is_expired %}
+                                        <div class="d-inline-flex gap-2">
+                                            <a href="{% url 'view_invitation' inv.token %}" target="_blank" class="btn btn-outline-info btn-sm">
+                                                Link
+                                            </a>
+                                            <form method="post" action="{% url 'revoke_invitation' center.id inv.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Revoke invitation for {{ inv.email }}?');">
+                                                    Revoke
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted small">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4 text-muted">
+                    <p class="mb-0">No email invitations sent yet for this center.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

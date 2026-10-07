@@ -1,52 +1,66 @@
-from django.shortcuts import render
-from .forms import SignUpForm,LoginForm
-
-from django.http import HttpResponseRedirect
-from django.shortcuts import render,HttpResponsePermanentRedirect
-from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import  authenticate,login,logout
-# from .models import Post
-from django import forms
-from django.contrib.auth.models import Group
+from django.contrib.auth import authenticate, login, logout
+from .forms import SignUpForm, LoginForm
 
-#home
-# Create your views here.
-
-#logout
+# Logout
 def user_logout(request):
     logout(request)
-    return HttpResponsePermanentRedirect('/')
+    messages.info(request, 'You have been logged out.')
+    return redirect('login')
 
-#login
+# Login
 def user_login(request):
-    if not request.user.is_authenticated:
-        if request.method == "POST":
-            form = LoginForm(request =request,data=request.POST)
-            if form.is_valid():
-                uname = form.cleaned_data['username']
-                upass = form.cleaned_data['password']
-                user = authenticate(username=uname,password = upass)
-                if user is not None:
-                    login(request,user)
-                    messages.success(request,'Logged in Successfully')
-                    return HttpResponsePermanentRedirect('/')
-        else:
-            form = LoginForm()
-        return render(request,'login.html',{'form':form})
-    else:
-        return HttpResponseRedirect('/')
+    if request.user.is_authenticated:
+        return redirect('dashboard')
 
-
-#signup
-def user_signup(request):
     if request.method == "POST":
-        form = SignUpForm(request.POST)
+        form = LoginForm(request=request, data=request.POST)
         if form.is_valid():
-            messages.success(request,'Congratulations!! successfullly signed in')
-            user = form.save()
-            # group = Group.objects.get(name ='Author')
-            # user.groups.add(group)
+            uname = form.cleaned_data['username']
+            upass = form.cleaned_data['password']
+            user = authenticate(username=uname, password=upass)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Welcome back, {user.first_name or user.username}!')
+                next_url = request.GET.get('next', 'dashboard')
+                return redirect(next_url)
     else:
-        form = SignUpForm()
-    return render(request,'signup.html',{'form':form})
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
+# Signup
+def user_signup(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
+    invitation_token = request.GET.get('invitation') or request.POST.get('invitation_token')
+    invitation = None
+    if invitation_token:
+        from main.models import CenterInvitation
+        inv = CenterInvitation.objects.filter(token=invitation_token).first()
+        if inv and inv.is_valid():
+            invitation = inv
+        else:
+            messages.warning(request, 'The invitation link is invalid or has expired.')
+
+    if request.method == "POST":
+        form = SignUpForm(request.POST, invitation=invitation)
+        if form.is_valid():
+            user = form.save()
+            if invitation and invitation.is_valid():
+                invitation.accept(user)
+                messages.success(
+                    request,
+                    f"Account created and membership granted in {invitation.center.name}! Please log in."
+                )
+            else:
+                messages.success(request, 'Account created successfully! Please log in.')
+            return redirect('login')
+    else:
+        form = SignUpForm(invitation=invitation)
+
+    return render(request, 'signup.html', {
+        'form': form,
+        'invitation': invitation
+    })

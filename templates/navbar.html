@@ -1,33 +1,124 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-secondary">
     <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/">
+            <span class="text-warning">🏛️ Shantipur</span> Finance
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center">
                 <li class="nav-item">
-                    <a class="nav-link active" style="font-weight: 900;" aria-current="page" href="/">Home</a>
+                    <a class="nav-link" href="/">Home</a>
                 </li>
+                {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'addpost' %}">Add Entry</a>
+                </li>
+
+                {% if nav_can_settle and nav_active_center %}
+                <li class="nav-item">
+                    <a class="nav-link text-info" href="{% url 'dashboard' %}?settlement=unsettled">
+                        ⚖️ Review &amp; Settle
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if nav_can_manage and nav_active_center %}
+                <li class="nav-item">
+                    <a class="nav-link text-info" href="{% url 'center_members' nav_active_center.id %}">
+                        👥 Members &amp; Invites
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- Centers Menu -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="centersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Centers
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="centersDropdown">
+                        <li><a class="dropdown-item" href="{% url 'apply_center' %}">📝 Apply for Center</a></li>
+                        <li><a class="dropdown-item" href="{% url 'my_center_applications' %}">📋 My Applications</a></li>
+                        {% if is_platform_admin %}
+                        <li><hr class="dropdown-divider border-secondary"></li>
+                        <li><a class="dropdown-item text-warning fw-semibold" href="{% url 'center_applications_list' %}">🛡️ Platform: Review Applications</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'about' %}">Important</a>
                 </li>
-                
+            </ul>
+
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 {% if request.user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link active" style="font-weight:500;" href="{% url 'dashboard' %}">Dashboard</a>
-                </li>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                </li>
+                    <!-- Center Switcher / Indicator -->
+                    {% if nav_user_centers %}
+                        {% if nav_user_centers|length > 1 %}
+                        <li class="nav-item dropdown me-lg-2 my-1 my-lg-0">
+                            <a class="btn btn-sm btn-outline-info dropdown-toggle d-flex align-items-center" href="#" id="activeCenterDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="me-1">🏛️</span>
+                                <span class="text-truncate" style="max-width: 170px;">{{ nav_active_center.name|default:"Switch Center" }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" aria-labelledby="activeCenterDropdown">
+                                <li class="dropdown-header text-muted small">Switch Active Center</li>
+                                {% for c in nav_user_centers %}
+                                <li>
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center {% if nav_active_center and nav_active_center.id == c.id %}active{% endif %}" href="{% url 'dashboard' %}?center={{ c.id }}">
+                                        <span>{{ c.name }}</span>
+                                        {% if nav_active_center and nav_active_center.id == c.id %}
+                                        <span class="badge bg-success ms-2">Active</span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% elif nav_active_center %}
+                        <li class="nav-item me-lg-2 my-1 my-lg-0">
+                            <span class="badge bg-secondary text-light py-2 px-3 border border-secondary d-inline-flex align-items-center" title="Active Center">
+                                <span>🏛️ {{ nav_active_center.name }}</span>
+                                {% if nav_membership %}
+                                <span class="badge bg-dark ms-1 text-info">{{ nav_membership.get_role_display }}</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="nav-item me-lg-2 my-1 my-lg-0">
+                            <a href="{% url 'apply_center' %}" class="badge bg-warning text-dark text-decoration-none py-2 px-3">
+                                ⚠️ No Center Assigned
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown my-1 my-lg-0">
+                        <a class="nav-link dropdown-toggle text-light" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            👤 {{ request.user.first_name|default:request.user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                            <li><span class="dropdown-item-text text-muted small">Signed in as <strong>{{ request.user.username }}</strong></span></li>
+                            {% if is_platform_admin %}
+                            <li><span class="dropdown-item-text text-warning small">🛡️ Platform Admin</span></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider border-secondary"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">🚪 Logout</a></li>
+                        </ul>
+                    </li>
                 {% else %}
-
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="{% url 'signup' %}">Signup</a>
-                </li> -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Login</a> {% endif %}
-
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'signup' %}">Signup</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

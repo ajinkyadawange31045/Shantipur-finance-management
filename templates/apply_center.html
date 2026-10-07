@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-lg-10 mx-auto my-4">
+    <div class="row g-4">
+        <!-- Application Submission Form -->
+        <div class="col-md-6">
+            <div class="card bg-dark text-white border-secondary h-100 shadow-sm">
+                <div class="card-header border-secondary bg-transparent py-3">
+                    <h4 class="mb-1 text-light">Register a New Center</h4>
+                    <p class="text-muted small mb-0">
+                        Submit an application to establish a new ISKCON center. Once approved by a platform admin, you will be assigned as its <strong>Center Manager</strong>.
+                    </p>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'apply_center' %}" method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2">
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label text-light" for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                            </label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text text-muted small">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4">Submit Application</button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applicant's Submission History -->
+        <div class="col-md-6">
+            <div class="card bg-dark text-white border-secondary h-100 shadow-sm">
+                <div class="card-header border-secondary bg-transparent py-3 d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 text-light">My Applications</h4>
+                    <span class="badge bg-secondary">{{ my_applications.count }} Total</span>
+                </div>
+                <div class="card-body">
+                    {% if my_applications %}
+                        <div class="list-group list-group-flush bg-transparent">
+                            {% for app in my_applications %}
+                            <div class="list-group-item bg-transparent text-white border-secondary px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="mb-1 text-info">{{ app.name }}</h5>
+                                        <small class="text-muted">Code: <code>{{ app.code }}</code></small>
+                                    </div>
+                                    <div>
+                                        {% if app.status == 'PENDING' %}
+                                            <span class="badge bg-warning text-dark">Pending Review</span>
+                                        {% elif app.status == 'APPROVED' %}
+                                            <span class="badge bg-success">Approved</span>
+                                        {% elif app.status == 'REJECTED' %}
+                                            <span class="badge bg-danger">Rejected</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="small text-muted mb-2">
+                                    {% if app.city %}{{ app.city }}, {% endif %}{{ app.country|default:'India' }}
+                                    &bull; Submitted on {{ app.created_at|date:"M d, Y" }}
+                                </div>
+                                {% if app.status == 'APPROVED' %}
+                                    <div class="mt-2">
+                                        <a href="{% url 'dashboard' %}?center={{ app.id }}" class="btn btn-sm btn-outline-success">
+                                            Open Center Dashboard &rarr;
+                                        </a>
+                                    </div>
+                                {% elif app.status == 'PENDING' %}
+                                    <div class="small text-muted fst-italic">
+                                        Waiting for platform admin review.
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <p class="mb-0">You have not submitted any center applications yet.</p>
+                            <small>Fill out the form to register your first center.</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

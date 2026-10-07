@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-sm-10 col-md-8 col-lg-6 mx-auto my-5">
+    <div class="card shadow border-danger text-center">
+        <div class="card-header bg-danger text-white py-3">
+            <h4 class="mb-0 fw-bold">🛑 403 - Permission Denied</h4>
+        </div>
+        <div class="card-body p-4 text-light">
+            <p class="lead mb-3">You do not have permission to access or perform this action.</p>
+            {% if exception %}
+            <div class="alert alert-dark border-danger text-danger text-start py-2 px-3 mb-4">
+                <strong>Reason:</strong> {{ exception }}
+            </div>
+            {% else %}
+            <div class="alert alert-dark border-secondary text-muted text-start py-2 px-3 mb-4">
+                <strong>Notice:</strong> Your current center role or account permissions do not permit this operation.
+            </div>
+            {% endif %}
+
+            <p class="text-muted small">
+                If you believe you should have access, please contact your Center Manager or a Platform Administrator.
+            </p>
+
+            <div class="d-flex justify-content-center gap-2 mt-4 flex-wrap">
+                <a href="{% url 'dashboard' %}" class="btn btn-primary px-4">
+                    🏛️ Go to Dashboard
+                </a>
+                <a href="{% url 'my_center_applications' %}" class="btn btn-outline-secondary px-3">
+                    📋 My Applications
+                </a>
+                <a href="/" class="btn btn-outline-light px-3">
+                    🏠 Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

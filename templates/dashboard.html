@@ -1,166 +1,567 @@
-{% extends 'base.html' %} {% load static %} {% block msg %} {% if messages %} {% for message in messages %}
-<div {% if message.tags %} class="alert alert-{{message.tags}} alert-dismissibl fade show mt-1" {% endif %}>
-    <strong>{{message}}</strong>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-
-{% endfor %} {% endif %} {% endblock msg %}
-<!-- <div class="col-sm-2 text-white my-5 text-center">
-    <h4 class="my-5">Profile</h4>
-    <h5>
-        {{full_name}}
-    </h5>
-    {% for group in groups %}
-    <p>
-        {{group.name}}
-    </p>
-    {% endfor %}
-
-</div> -->
-
+{% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js">
-</script>
 <style>
     .block_ard {
         display: none;
-        /* font-size: 20px; */
     }
     
-.load_more
-{
-	margin-top: 80px;
-	margin-bottom: 140px;
-}
-.load_more_button
-{
-	width: 118px;
-	height: 36px;
-	background: transparent;
-	border: solid 1px #d7d7d7;
-	border-radius: 18px;
-	margin: 0 auto;
-	line-height: 32px;
-	font-family: 'Ubuntu', sans-serif;
-	font-size: 14px;
-	font-weight: 500;
-	color: rgba(255, 255, 255, 0.5);
-	cursor: pointer;
-}
-.load_more_button:hover
-{
-	background: #d7d7d7;
-    color: black;
-}
-</style>
-<div class="table-responsive my-4">
-    <h3 class="text-white mt-5">Dashboard Page</h3>
-    <a href="{% url 'addpost' %}" class="btn btn-success">Add Entry</a>
-    <h6 class="text-center alert alert-info mt-3">Show Post Information</h6>
+    .load_more {
+        margin-top: 30px;
+        margin-bottom: 50px;
+    }
 
+    .load_more_button {
+        width: 140px;
+        height: 38px;
+        background: transparent;
+        border: solid 1px #d7d7d7;
+        border-radius: 19px;
+        margin: 0 auto;
+        line-height: 36px;
+        font-family: 'Ubuntu', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .load_more_button:hover {
+        background: #d7d7d7;
+        color: black;
+    }
+
+    .sticky-bulk-bar {
+        position: sticky;
+        top: 65px;
+        z-index: 1020;
+    }
+</style>
+
+<div class="col-12 my-4">
+    {% if not active_center %}
+    <!-- Empty State: No Active Center -->
+    <div class="card bg-dark text-white border-secondary p-5 text-center my-4 shadow">
+        <div class="display-5 text-warning mb-3">🏛️</div>
+        <h3 class="fw-bold">No Active Center Selected</h3>
+        <p class="text-muted mx-auto mb-4" style="max-width: 600px;">
+            You are not currently an active member of any center, or no center is selected. You can register a new center or check your submitted applications. If your center is already registered, ask your Center Manager for an invitation link.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{% url 'apply_center' %}" class="btn btn-primary px-4">📝 Apply to Register a Center</a>
+            <a href="{% url 'my_center_applications' %}" class="btn btn-outline-info px-4">📋 View My Applications</a>
+        </div>
+    </div>
+    {% else %}
+
+    <!-- Center Header & Navigation -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+            <h3 class="text-white mb-1">
+                Dashboard — <span class="text-info">{{ active_center.name }}</span>
+            </h3>
+            <p class="text-muted mb-0 small">
+                Logged in as <strong>{{ full_name|default:request.user.username }}</strong>
+                {% if request.user.is_superuser %}
+                    <span class="badge bg-danger ms-1">Platform Admin</span>
+                {% elif membership %}
+                    <span class="badge bg-primary ms-1">{{ membership.get_role_display }}</span>
+                {% endif %}
+                <span class="text-muted ms-2">&bull; Center Code: <code>{{ active_center.code }}</code></span>
+            </p>
+        </div>
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            {% if user_centers and user_centers.count > 1 %}
+            <div class="dropdown">
+                <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    🏛️ Switch Center: {{ active_center.name|truncatechars:18 }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow">
+                    <li class="dropdown-header text-muted small">Your Centers</li>
+                    {% for c in user_centers %}
+                    <li>
+                        <a class="dropdown-item d-flex justify-content-between align-items-center {% if c.id == active_center.id %}active{% endif %}" href="?center={{ c.id }}{% if settlement_filter %}&settlement={{ settlement_filter }}{% endif %}">
+                            <span>{{ c.name }}</span>
+                            {% if c.id == active_center.id %}
+                            <span class="badge bg-success ms-2">Active</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if can_manage %}
+                <a href="{% url 'center_members' active_center.id %}" class="btn btn-outline-info btn-sm">
+                    👥 Members &amp; Invites
+                </a>
+            {% endif %}
+            <a href="{% url 'addpost' %}" class="btn btn-success btn-sm">
+                + Add New Entry
+            </a>
+        </div>
+    </div>
+
+    <!-- Settlement Review Filter Tabs & Counter -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Settlement filters">
+            <a href="?center={{ active_center.id }}&settlement=all" class="btn {% if settlement_filter == 'all' %}btn-info{% else %}btn-outline-secondary text-white{% endif %}">
+                All ({{ total_count }})
+            </a>
+            <a href="?center={{ active_center.id }}&settlement=unsettled" class="btn {% if settlement_filter == 'unsettled' %}btn-warning text-dark fw-bold{% else %}btn-outline-secondary text-white{% endif %}">
+                Unsettled / Pending ({{ unsettled_count }})
+            </a>
+            <a href="?center={{ active_center.id }}&settlement=settled" class="btn {% if settlement_filter == 'settled' %}btn-success{% else %}btn-outline-secondary text-white{% endif %}">
+                Settled ({{ settled_count }})
+            </a>
+        </div>
+        <div>
+            {% if can_settle and unsettled_count > 0 %}
+                <span class="badge bg-warning text-dark px-3 py-2">
+                    ⚡ <strong>{{ unsettled_count }}</strong> unsettled item{{ unsettled_count|pluralize }} awaiting review
+                </span>
+            {% elif unsettled_count == 0 and total_count > 0 %}
+                <span class="badge bg-success text-white px-3 py-2">
+                    ✓ All {{ total_count }} expenses settled
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Sticky Bulk Action Bar for Settlement -->
+    {% if can_settle %}
+    <div id="bulkActionBar" class="card bg-dark border-success mb-3 p-2 d-none shadow sticky-bulk-bar">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-success fs-6"><span id="selectedCount">0</span> Selected</span>
+                <span class="text-light small">
+                    Total Settlement Sum: <strong class="text-warning fs-6">Rs. <span id="selectedTotal">0</span></strong>
+                </span>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary text-white" id="clearSelectionBtn">
+                    Clear Selection
+                </button>
+                <button type="button" class="btn btn-sm btn-success fw-bold px-3" data-bs-toggle="modal" data-bs-target="#bulkSettleModal" id="reviewBulkBtn">
+                    ⚡ Review & Settle Selected (<span id="btnSelectedCount">0</span>)
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     {% if posts %}
-    <table class="table align-middle mb-0 bg-white">
-        <thead class="" style="color: rgb(6, 5, 5); background-color: rgb(67, 213, 86);">
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>To_be_returned</th>
-                <th>Bill</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {%for p in posts %}
-            <tr class="block_ard">
-                <td>
-                    <p>{{p.id}}</p>
-                </td>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <!-- <img src="https://mdbootstrap.com/img/new/avatars/8.jpg" alt=""
-                            style="width: 45px; height: 45px" class="rounded-circle" /> -->
-                        <div class="ms-3">
-                            <p class="fw-bold mb-1">{{p.user}}</p>
-                            <p class="text-muted mb-0">{{p.date}}</p>
+    <!-- Expense Table Form for Batch Settlement -->
+    <form id="bulkSettleForm" method="post" action="{% url 'bulk_settle_expenses' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+        <div class="table-responsive rounded shadow-sm">
+            <table class="table align-middle mb-0 bg-white table-hover">
+                <thead style="color: rgb(6, 5, 5); background-color: rgb(67, 213, 86);">
+                    <tr>
+                        {% if can_settle %}
+                        <th style="width: 40px;" class="text-center">
+                            <input type="checkbox" id="selectAllCheckbox" class="form-check-input" title="Select all unsettled expenses">
+                        </th>
+                        {% endif %}
+                        <th style="width: 60px;">#ID</th>
+                        <th>Devotee & Description</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount Details</th>
+                        <th>Bill</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in posts %}
+                    <tr class="block_ard">
+                        {% if can_settle %}
+                        <td class="text-center">
+                            {% if not p.remaining %}
+                            <input type="checkbox" name="post_ids" value="{{ p.id }}" class="expense-checkbox form-check-input"
+                                   data-id="{{ p.id }}"
+                                   data-user="{{ p.user.get_full_name|default:p.user.username }}"
+                                   data-desc="{{ p.desc|default:'No description'|truncatewords:8 }}"
+                                   data-category="{{ p.category }}"
+                                   data-amount="{{ p.amount_used }}"
+                                   data-taken="{{ p.amount_taken }}"
+                                   data-returned="{{ p.to_be_returned }}">
+                            {% else %}
+                            <span class="text-muted small" title="Already settled">—</span>
+                            {% endif %}
+                        </td>
+                        {% endif %}
+
+                        <td>
+                            <strong>{{ p.id }}</strong>
+                        </td>
+                        <td>
+                            <div>
+                                <span class="fw-bold d-block text-dark">{{ p.user.get_full_name|default:p.user.username }}</span>
+                                <small class="text-muted">{{ p.desc|default:"No description"|truncatewords:8 }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <small class="text-nowrap">{{ p.date|date:"d M Y" }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ p.category }}</span>
+                        </td>
+                        <td>
+                            <div class="small">
+                                <div>Spent: <strong class="text-danger">Rs. {{ p.amount_used }}</strong></div>
+                                <div class="text-muted">Taken: Rs. {{ p.amount_taken }}</div>
+                                <div>Balance: 
+                                    {% if p.to_be_returned >= 0 %}
+                                    <span class="text-success fw-bold">Rs. {{ p.to_be_returned }}</span>
+                                    {% else %}
+                                    <span class="text-warning fw-bold">Rs. {{ p.to_be_returned }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if p.bill %}
+                                <img width="22" height="22" src="{% static 'images/square-check-regular.svg' %}" alt="Bill Present" title="Bill Present">
+                            {% else %}
+                                <img width="22" height="22" src="{% static 'images/square-regular.svg' %}" alt="No Bill" title="No Bill">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if p.remaining %}
+                                <span class="badge bg-success" title="Settled">
+                                    ✓ Settled
+                                </span>
+                                {% if p.settled_by %}
+                                    <div class="text-muted" style="font-size: 11px;">
+                                        by {{ p.settled_by.username }}
+                                        {% if p.settled_at %}
+                                        <br>{{ p.settled_at|date:'d M Y H:i' }}
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="d-flex flex-column align-items-start gap-1">
+                                    <span class="badge bg-danger">Unsettled</span>
+                                    {% if can_settle %}
+                                    <button type="button" class="btn btn-outline-success btn-sm py-0 px-2" style="font-size: 11px;"
+                                            onclick="openSingleSettleModal('{{ p.id }}', '{{ p.user.get_full_name|default:p.user.username|escapejs }}', '{{ p.category|escapejs }}', '{{ p.desc|default:"No description"|truncatewords:6|escapejs }}', '{{ p.amount_used }}', '{% url 'settle_expense' p.id %}');">
+                                        ✓ Settle
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <div class="d-inline-flex gap-1">
+                                {% if can_manage or can_settle or request.user == p.user and not p.remaining %}
+                                    <a href="{% url 'updatepost' p.id %}" class="btn btn-warning btn-sm py-0 px-2" style="font-size: 12px;">Edit</a>
+                                {% endif %}
+                                
+                                {% if can_manage or request.user == p.user and not p.remaining %}
+                                    <form action="{% url 'deletepost' p.id %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete Expense #{{ p.id }}?');">
+                                        {% csrf_token %}
+                                        <input type="submit" class="btn btn-danger btn-sm py-0 px-2" style="font-size: 12px;" value="Delete">
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+
+    <div class="text-center load_more my-3">
+        <div id="load" class="load_more_button text-center">Load More</div>
+    </div>
+
+    {% else %}
+    <!-- Filtered Empty States -->
+    <div class="card bg-dark text-white border-secondary text-center p-5 my-4 shadow-sm">
+        {% if settlement_filter == 'unsettled' %}
+            <div class="fs-1 text-success mb-2">🎉</div>
+            <h4 class="fw-bold text-success">All Caught Up!</h4>
+            <p class="text-muted">There are no pending unsettled expenses in <strong>{{ active_center.name }}</strong>.</p>
+            <div class="mt-3">
+                <a href="?center={{ active_center.id }}&settlement=all" class="btn btn-outline-info btn-sm">View All Expenses ({{ total_count }})</a>
+            </div>
+        {% elif settlement_filter == 'settled' %}
+            <div class="fs-1 text-muted mb-2">📋</div>
+            <h4 class="fw-bold text-light">No Settled Expenses</h4>
+            <p class="text-muted">No expenses have been marked as settled in <strong>{{ active_center.name }}</strong> yet.</p>
+            <div class="mt-3">
+                <a href="?center={{ active_center.id }}&settlement=unsettled" class="btn btn-outline-warning btn-sm text-white">View Unsettled Expenses ({{ unsettled_count }})</a>
+            </div>
+        {% else %}
+            <div class="fs-1 text-muted mb-2">📝</div>
+            <h4 class="fw-bold text-light">No Expenses Recorded</h4>
+            <p class="text-muted">There are no expense records logged for <strong>{{ active_center.name }}</strong> yet.</p>
+            <div class="mt-3">
+                <a href="{% url 'addpost' %}" class="btn btn-success px-4">Add Your First Entry</a>
+            </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+
+<!-- Modal: Batch Settlement Confirmation Detail -->
+{% if can_settle %}
+<div class="modal fade" id="bulkSettleModal" tabindex="-1" aria-labelledby="bulkSettleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content bg-dark text-white border-success">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-success" id="bulkSettleModalLabel">
+                    ⚡ Confirm Batch Settlement (<span id="modalSelectedCount">0</span> items)
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-dark border-secondary text-light mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Reviewing expenses before settlement:</strong>
+                            <div class="text-muted small">Please verify amounts and devotee names to avoid settling the wrong item.</div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-success fs-6">Total: Rs. <span id="modalTotalAmount">0</span></span>
                         </div>
                     </div>
-                </td>
+                </div>
 
-                <td>
-
-                   <p> {{ p.to_be_returned }} Rs.</p>
-
-                </td>
-                <td> {% if p.bill %}
-                    <!-- <p style="color: green;">Bill is there</p> -->
-                    <!-- <i class="fa-solid fa-square-check"></i> -->
-                    <!-- <i class="fa-regular fa-square-check"></i> -->
-                    <img width="24px" height="auto" src="{% static 'images/square-check-regular.svg' %}" alt="">
-                    {% else %}
-                    <img width="24px" height="auto" src="{% static 'images/square-regular.svg' %}" alt="">
-                    <p style="color: red;"> </p>
-                    {% endif %}
-                </td>
-                <td>
-                    <p class="fw-normal mb-1">{{p.category}}</p>
-
-                </td>
-
-                <td>
-                    <!-- {{p.remaining}} -->
-                    {% if p.remaining %}
-                    <p style="color: green;">Paid</p>
-                    {% else %}
-                    <p style="color: red;">Not paid</p>
-                    {% endif %}
-
-                </td>
-
-                <td class="">
-                    {% if request.user == p.user or perms.blog.change_post %}
-                    <a href="{% url 'updatepost' p.id %}" class="btn btn-warning btn-sm">Edit</a> 
-                    {% endif %}
-                    {% if perms.blog.delete_post %}
-                    <form action="{% url 'deletepost' p.id %}" method="post" class="d-inline">{% csrf_token %}
-                        <input type="submit" class="btn btn-danger btn-sm" value="Delete"> {% endif %}
-                    </form>
-                </td>
-                
-            </tr>
-            {%endfor%}
-        </tbody>
-    </table>
-    {% else %}
-    <h4 class="text-center alert alert-warning">No records</h4>
-    {% endif %}
-    <div class="text-center load_more my-2 " >
-        <div id="load" class="load_more_button text-center trans_200">Load More</div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-sm table-hover align-middle">
+                        <thead class="table-secondary text-dark">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Devotee</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th class="text-end">Spent (Rs.)</th>
+                                <th class="text-end">Balance (Rs.)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalSelectedTableBody">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="bulkSettleForm" class="btn btn-success fw-bold px-4">
+                    ✓ Confirm & Settle All Selected
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Modal: Single Expense Settle Confirmation -->
+<div class="modal fade" id="singleSettleModal" tabindex="-1" aria-labelledby="singleSettleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white border-success">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-success" id="singleSettleModalLabel">Confirm Expense Settlement</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to settle the following expense?</p>
+                <div class="card bg-secondary text-white p-3 mb-3 border-0">
+                    <div class="d-flex justify-content-between">
+                        <strong>Expense ID:</strong>
+                        <span id="singleModalId"></span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <strong>Devotee:</strong>
+                        <span id="singleModalUser"></span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <strong>Category:</strong>
+                        <span id="singleModalCategory"></span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <strong>Amount Spent:</strong>
+                        <span class="text-warning fw-bold">Rs. <span id="singleModalAmount"></span></span>
+                    </div>
+                    <div class="mt-2 text-muted small" id="singleModalDesc"></div>
+                </div>
+                <small class="text-muted">Settlement records your account and timestamp into the audit trail.</small>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="singleSettleForm" method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="btn btn-success fw-bold">✓ Confirm Settlement</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <script>
-    $(document).ready(function() {
-        $(".block_ard").slice(0,7).show();
-        if($(".block_ard:hidden").length!=0) {
-            $("#load").show();
-        }
-        $("#load").on("click",function(e) {
-            e.preventDefault();
-            $(".block_ard:hidden").slice(0,5).slideDown();
-            if($(".block_ard:hidden").length==0) {
-                $("#load").text("No More to view")
-                    .fadOut("slow");
+    document.addEventListener("DOMContentLoaded", function () {
+        // Pagination / Load More
+        if (typeof jQuery !== "undefined") {
+            var items = $(".block_ard");
+            items.slice(0, 15).show();
+
+            if ($(".block_ard:hidden").length === 0) {
+                $("#load").hide();
             }
+
+            $("#load").on("click", function (e) {
+                e.preventDefault();
+                $(".block_ard:hidden").slice(0, 15).fadeIn();
+                if ($(".block_ard:hidden").length === 0) {
+                    $("#load").text("No More to View").fadeOut("slow");
+                }
+            });
+        }
+
+        // Bulk settlement selection logic
+        const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+        const checkboxes = document.querySelectorAll(".expense-checkbox");
+        const bulkActionBar = document.getElementById("bulkActionBar");
+        const selectedCountSpan = document.getElementById("selectedCount");
+        const selectedTotalSpan = document.getElementById("selectedTotal");
+        const btnSelectedCountSpan = document.getElementById("btnSelectedCount");
+        const modalSelectedCountSpan = document.getElementById("modalSelectedCount");
+        const modalTotalAmountSpan = document.getElementById("modalTotalAmount");
+        const modalSelectedTableBody = document.getElementById("modalSelectedTableBody");
+        const clearSelectionBtn = document.getElementById("clearSelectionBtn");
+
+        function updateSelectionState() {
+            let selectedCheckboxes = document.querySelectorAll(".expense-checkbox:checked");
+            let count = selectedCheckboxes.length;
+            let total = 0;
+
+            selectedCheckboxes.forEach(cb => {
+                let amt = parseFloat(cb.getAttribute("data-amount")) || 0;
+                total += amt;
+            });
+
+            if (selectedCountSpan) selectedCountSpan.textContent = count;
+            if (btnSelectedCountSpan) btnSelectedCountSpan.textContent = count;
+            if (selectedTotalSpan) selectedTotalSpan.textContent = total.toLocaleString();
+
+            if (count > 0) {
+                if (bulkActionBar) bulkActionBar.classList.remove("d-none");
+            } else {
+                if (bulkActionBar) bulkActionBar.classList.add("d-none");
+            }
+
+            if (selectAllCheckbox && checkboxes.length > 0) {
+                selectAllCheckbox.checked = (count === checkboxes.length);
+            }
+        }
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener("change", function () {
+                checkboxes.forEach(cb => {
+                    cb.checked = selectAllCheckbox.checked;
+                });
+                updateSelectionState();
+            });
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener("change", updateSelectionState);
         });
-    })
+
+        if (clearSelectionBtn) {
+            clearSelectionBtn.addEventListener("click", function () {
+                checkboxes.forEach(cb => {
+                    cb.checked = false;
+                });
+                if (selectAllCheckbox) selectAllCheckbox.checked = false;
+                updateSelectionState();
+            });
+        }
+
+        // Populate Modal with detail before showing
+        const bulkModal = document.getElementById("bulkSettleModal");
+        if (bulkModal) {
+            bulkModal.addEventListener("show.bs.modal", function () {
+                let selectedCheckboxes = document.querySelectorAll(".expense-checkbox:checked");
+                let count = selectedCheckboxes.length;
+                let total = 0;
+
+                if (modalSelectedTableBody) {
+                    modalSelectedTableBody.innerHTML = "";
+                    selectedCheckboxes.forEach(cb => {
+                        let id = cb.getAttribute("data-id");
+                        let user = cb.getAttribute("data-user");
+                        let cat = cb.getAttribute("data-category");
+                        let desc = cb.getAttribute("data-desc");
+                        let amt = parseFloat(cb.getAttribute("data-amount")) || 0;
+                        let ret = cb.getAttribute("data-returned");
+                        total += amt;
+
+                        let tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><strong>#${id}</strong></td>
+                            <td>${user}</td>
+                            <td><span class="badge bg-secondary">${cat}</span></td>
+                            <td class="small text-muted">${desc}</td>
+                            <td class="text-end fw-bold text-success">Rs. ${amt.toLocaleString()}</td>
+                            <td class="text-end text-muted small">Rs. ${ret}</td>
+                        `;
+                        modalSelectedTableBody.appendChild(tr);
+                    });
+                }
+
+                if (modalSelectedCountSpan) modalSelectedCountSpan.textContent = count;
+                if (modalTotalAmountSpan) modalTotalAmountSpan.textContent = total.toLocaleString();
+            });
+        }
+    });
+
+    // Single Settle Modal helper
+    function openSingleSettleModal(id, user, category, desc, amount, actionUrl) {
+        const modalEl = document.getElementById("singleSettleModal");
+        if (!modalEl) {
+            if (confirm("Confirm settlement of Rs. " + amount + " for " + user + " (#" + id + " - " + category + ")?")) {
+                let form = document.createElement("form");
+                form.method = "POST";
+                form.action = actionUrl;
+                let csrf = document.querySelector("[name=csrfmiddlewaretoken]").value;
+                let csrfInput = document.createElement("input");
+                csrfInput.type = "hidden";
+                csrfInput.name = "csrfmiddlewaretoken";
+                csrfInput.value = csrf;
+                form.appendChild(csrfInput);
+                let nextInput = document.createElement("input");
+                nextInput.type = "hidden";
+                nextInput.name = "next";
+                nextInput.value = window.location.href;
+                form.appendChild(nextInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+            return;
+        }
+
+        document.getElementById("singleModalId").textContent = "#" + id;
+        document.getElementById("singleModalUser").textContent = user;
+        document.getElementById("singleModalCategory").textContent = category;
+        document.getElementById("singleModalAmount").textContent = amount;
+        document.getElementById("singleModalDesc").textContent = desc ? ("Note: " + desc) : "";
+        document.getElementById("singleSettleForm").action = actionUrl;
+
+        var myModal = new bootstrap.Modal(modalEl);
+        myModal.show();
+    }
 </script>
 {% endblock content %}

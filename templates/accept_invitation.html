@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-md-6 mx-auto my-5">
+    <div class="card bg-dark text-white border-secondary shadow-lg">
+        <div class="card-header border-secondary text-center py-4 bg-transparent">
+            <h4 class="mb-1 text-light">Center Invitation</h4>
+            <p class="text-muted small mb-0">You have been invited to participate in center financial management</p>
+        </div>
+        <div class="card-body p-4 text-center">
+            {% if invitation %}
+                <div class="mb-4">
+                    <span class="badge bg-primary px-3 py-2 fs-6 mb-3">{{ invitation.center.name }}</span>
+                    <h5 class="text-info">Role: {{ invitation.get_role_display }}</h5>
+                    <p class="text-muted small">
+                        Invited by <strong>{{ invitation.invited_by.username }}</strong> &bull; Valid until {{ invitation.expires_at|date:"M d, Y H:i" }}
+                    </p>
+                </div>
+
+                {% if already_accepted %}
+                    <div class="alert alert-info py-2">
+                        This invitation has already been accepted.
+                    </div>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-info">Go to Dashboard</a>
+                {% elif expired %}
+                    <div class="alert alert-warning py-2">
+                        This invitation link has expired. Please contact the center manager to request a new invitation.
+                    </div>
+                {% elif user_is_authenticated %}
+                    {% if email_matches %}
+                        <div class="alert alert-success py-2 mb-3">
+                            Logged in as <strong>{{ request.user.username }}</strong> ({{ request.user.email }})
+                        </div>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success px-4 py-2">
+                                Accept Invitation as {{ request.user.username }}
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning py-2 mb-3 text-start small">
+                            This invitation was issued to <strong>{{ invitation.email }}</strong>.<br>
+                            You are signed in as <strong>{{ request.user.username }}</strong>
+                            {% if request.user.email %}({{ request.user.email }}){% else %}(no email on file){% endif %}.
+                            To accept, please sign in with the invited email address.
+                        </div>
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            <a href="{% url 'logout' %}?next={% url 'view_invitation' invitation.token %}" class="btn btn-outline-warning btn-sm">
+                                Switch Account
+                            </a>
+                            <a href="{% url 'signup' %}?invitation={{ invitation.token }}" class="btn btn-primary btn-sm">
+                                Create Account with {{ invitation.email }}
+                            </a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="p-3 border border-secondary rounded bg-black bg-opacity-25 mb-4 text-start">
+                        <p class="small text-muted mb-2">
+                            To accept this invitation and join <strong>{{ invitation.center.name }}</strong>:
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'signup' %}?invitation={{ invitation.token }}" class="btn btn-primary">
+                                Create an Account to Accept &rarr;
+                            </a>
+                            <a href="{% url 'login' %}?next={% url 'view_invitation' invitation.token %}" class="btn btn-outline-light">
+                                Already have an account? Log In to Accept
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="py-4 text-muted">
+                    <p class="mb-2">This invitation link is not recognized or may have been revoked.</p>
+                    <a href="/" class="btn btn-outline-secondary btn-sm">Return Home</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

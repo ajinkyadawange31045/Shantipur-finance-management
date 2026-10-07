@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-12 my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="text-white mb-0">Center Applications Review</h3>
+            <p class="text-muted small mb-0">Platform Admin Queue for reviewing and approving new ISKCON centers</p>
+        </div>
+        <div>
+            <a href="{% url 'apply_center' %}" class="btn btn-outline-info btn-sm">+ Submit New Application</a>
+        </div>
+    </div>
+
+    <!-- Pending Applications Section -->
+    <div class="card bg-dark text-white border-secondary mb-4 shadow-sm">
+        <div class="card-header border-secondary bg-transparent py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-warning">
+                Pending Review
+                <span class="badge bg-warning text-dark ms-2">{{ pending_applications.count }}</span>
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            {% if pending_applications %}
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <thead class="table-secondary text-dark">
+                            <tr>
+                                <th>Center Name</th>
+                                <th>Code / Slug</th>
+                                <th>Location</th>
+                                <th>Applicant</th>
+                                <th>Submitted On</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in pending_applications %}
+                            <tr>
+                                <td class="fw-bold text-light">{{ app.name }}</td>
+                                <td><code>{{ app.code }}</code></td>
+                                <td class="text-muted">
+                                    {{ app.city }}{% if app.city and app.state %}, {% endif %}{{ app.state }}{% if app.country %} ({{ app.country }}){% endif %}
+                                </td>
+                                <td>
+                                    <span class="text-info">{{ app.submitted_by.username|default:"Unknown" }}</span>
+                                    {% if app.submitted_by.email %}
+                                        <div class="small text-muted">{{ app.submitted_by.email }}</div>
+                                    {% endif %}
+                                </td>
+                                <td class="text-muted small">{{ app.created_at|date:"M d, Y H:i" }}</td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2">
+                                        <form method="post" action="{% url 'approve_center_application' app.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Approve {{ app.name }} and assign {{ app.submitted_by.username }} as Center Manager?');">
+                                                Approve
+                                            </button>
+                                        </form>
+                                        <form method="post" action="{% url 'reject_center_application' app.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Reject application for {{ app.name }}?');">
+                                                Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5 text-muted">
+                    <p class="mb-0">No pending center applications awaiting review.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Processed Applications History -->
+    <div class="card bg-dark text-white border-secondary shadow-sm">
+        <div class="card-header border-secondary bg-transparent py-3">
+            <h5 class="mb-0 text-light">Application Review History</h5>
+        </div>
+        <div class="card-body p-0">
+            {% if processed_applications %}
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <thead class="table-secondary text-dark">
+                            <tr>
+                                <th>Center Name</th>
+                                <th>Code</th>
+                                <th>Location</th>
+                                <th>Applicant</th>
+                                <th>Status</th>
+                                <th>Reviewed By</th>
+                                <th>Reviewed On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in processed_applications %}
+                            <tr>
+                                <td class="fw-bold">{{ app.name }}</td>
+                                <td><code>{{ app.code }}</code></td>
+                                <td class="text-muted">{{ app.city }}, {{ app.country|default:'India' }}</td>
+                                <td>{{ app.submitted_by.username|default:"-" }}</td>
+                                <td>
+                                    {% if app.status == 'APPROVED' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% elif app.status == 'REJECTED' %}
+                                        <span class="badge bg-danger">Rejected</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ app.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ app.approved_by.username|default:"-" }}</td>
+                                <td class="text-muted small">{{ app.approved_at|date:"M d, Y H:i"|default:"-" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4 text-muted">
+                    <p class="mb-0">No processed applications recorded yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

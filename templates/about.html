@@ -1,15 +1,35 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
-<img src="{% static 'images/rsp.jpeg' %}" alt="">
-<div class="col-sm-10">
-    <h3 class="text-white mt-5">Rules to be followed before uploading the </h3>
-    <p> Any purchase things can be added here, please mention the items purchased with the amount in breif</p>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-md-8 mx-auto my-5">
+    <div class="card bg-dark text-white border-secondary shadow">
+        <div class="card-header border-secondary text-center py-3">
+            <h3 class="mb-0">Important Guidelines & Rules</h3>
+        </div>
+        <div class="card-body p-4 text-center">
+            <img src="{% static 'images/rsp.jpeg' %}" alt="Radha Shyamsundar" class="img-fluid rounded mb-4 shadow" style="max-height: 350px; object-fit: cover;">
+            
+            <div class="text-start mt-3">
+                <h5 class="text-warning mb-3">Guidelines for logging purchases:</h5>
+                <ul class="list-group list-group-flush bg-dark text-white">
+                    <li class="list-group-item bg-dark text-white border-secondary">
+                        <strong>1. Item Details:</strong> Any purchased items can be added here. Please describe the items with amount breakdown clearly in brief.
+                    </li>
+                    <li class="list-group-item bg-dark text-white border-secondary">
+                        <strong>2. Bills & Receipts:</strong> Try to collect and retain all physical or digital bills compulsorily. Bills will be collected for reconciliation.
+                    </li>
+                    <li class="list-group-item bg-dark text-white border-secondary">
+                        <strong>3. Prompt Settlement:</strong> Please settle returns and remaining amounts promptly.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="mt-4 pt-3 border-top border-secondary text-muted">
+                <p class="mb-1">Hare Krishna!</p>
+                <p class="mb-0">Please pray for our seva and transparent accounting.</p>
+            </div>
+        </div>
+    </div>
 </div>
-<p>I will collect the bills from you at the end of the day
-</p>
-<p>Please do not forgot the bill
-</p>
-<p>Please pray for me
-</p>
-<p>Hare Krishna
-</p>
 {% endblock content %}
