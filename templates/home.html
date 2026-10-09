@@ -1,64 +1,600 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<style>
-    .block_ard {
-        display: none;
-    }
-    
-    .load_more {
-        margin-top: 40px;
-        margin-bottom: 60px;
-    }
+{% block title %}
+{% if request.user.is_authenticated and active_center %}
+    {{ active_center.name }} | Shantipur Finance
+{% else %}
+    Shantipur Finance | Devotional Seva Accounts &amp; Cashbox Stewardship
+{% endif %}
+{% endblock title %}
 
-    .load_more_button {
-        width: 140px;
-        height: 38px;
-        background: transparent;
-        border: solid 1px #d7d7d7;
-        border-radius: 19px;
-        margin: 0 auto;
-        line-height: 36px;
-        font-family: 'Ubuntu', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        color: rgba(255, 255, 255, 0.7);
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-    }
+{% block main_layout %}
+{% if not request.user.is_authenticated %}
+<!-- ========================================================= -->
+<!-- PRE-LOGIN SAAS LANDING PAGE: DONATION-DRIVEN SEVA PLATFORM -->
+<!-- ========================================================= -->
+<div class="landing-page-wrapper">
 
-    .load_more_button:hover {
-        background: #d7d7d7;
-        color: black;
-    }
-</style>
+    <!-- 1. HERO SECTION -->
+    <section class="hero-wrapper text-center text-lg-start">
+        <div class="hero-glow-1"></div>
+        <div class="hero-glow-2"></div>
+        <div class="container position-relative z-1">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    <div class="hero-badge mb-3">
+                        <span>✨</span>
+                        <span>Seva-Driven • 100% Non-Profit • Donation Supported</span>
+                    </div>
+                    <h1 class="hero-title mb-3">
+                        Sacred Stewardship for <br>
+                        <span class="text-warning font-cinzel">Ashram &amp; Center</span> Finances
+                    </h1>
+                    <p class="hero-subtitle mb-4">
+                        Eliminate lost receipts and untracked cash advances. Shantipur Finance gives ISKCON temples, ashrams, and preaching centers an honest, zero-friction ledger to manage advances, verify bills, and settle seva expenses with absolute integrity.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+                        <a href="#simulator" class="btn btn-gold btn-lg d-inline-flex align-items-center gap-2">
+                            <span>🎮 Try Interactive Simulator</span>
+                            <span>↓</span>
+                        </a>
+                        <a href="{% url 'signup' %}" class="btn btn-outline-gold btn-lg">
+                            Get Started Free
+                        </a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">
+                            Sign In
+                        </a>
+                    </div>
 
-<div class="col-12 mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <!-- Trust indicators -->
+                    <div class="row g-3 mt-4 pt-3 border-top border-secondary-subtle">
+                        <div class="col-sm-4 col-6">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fs-4 text-warning">🏛️</span>
+                                <div>
+                                    <div class="fw-bold text-light small">Multi-Center</div>
+                                    <div class="text-secondary" style="font-size: 0.78rem;">Isolated ashram ledgers</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-6">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fs-4 text-success">⚖️</span>
+                                <div>
+                                    <div class="fw-bold text-light small">Zero Leakage</div>
+                                    <div class="text-secondary" style="font-size: 0.78rem;">Advance vs Return audit</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-12">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fs-4 text-info">💝</span>
+                                <div>
+                                    <div class="fw-bold text-light small">Pure Seva Model</div>
+                                    <div class="text-secondary" style="font-size: 0.78rem;">No paid paywalls or tiers</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Interactive Snapshot Card -->
+                <div class="col-lg-5">
+                    <div class="saas-card p-4 border border-warning-subtle shadow-lg position-relative overflow-hidden">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-warning text-dark fw-bold px-2 py-1">LIVE DISBURSEMENT DEMO</span>
+                            </div>
+                            <span class="text-secondary small font-monospace">Audited Ledger #1042</span>
+                        </div>
+
+                        <div class="bg-dark p-3 rounded-3 mb-3 border border-secondary">
+                            <div class="d-flex justify-content-between text-secondary small mb-1">
+                                <span>Purpose &amp; Department</span>
+                                <span class="text-warning">Kitchen Food / Prasadam</span>
+                            </div>
+                            <div class="fw-bold text-light fs-6">Sunday Feast Vegetables &amp; Desi Ghee</div>
+                            <div class="text-muted small mt-1">Volunteer: Bhakta Amit • Cashier: Ramananda Das</div>
+                        </div>
+
+                        <div class="row g-2 mb-3 text-center">
+                            <div class="col-4">
+                                <div class="p-2 rounded bg-secondary bg-opacity-10 border border-secondary-subtle">
+                                    <div class="text-secondary small" style="font-size: 0.7rem;">CASH ADVANCE</div>
+                                    <div class="fw-bold text-light">₹5,000</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-2 rounded bg-secondary bg-opacity-10 border border-secondary-subtle">
+                                    <div class="text-secondary small" style="font-size: 0.7rem;">AMOUNT USED</div>
+                                    <div class="fw-bold text-warning">₹4,320</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="p-2 rounded bg-success bg-opacity-10 border border-success-subtle">
+                                    <div class="text-success small" style="font-size: 0.7rem;">DUE TO CASHBOX</div>
+                                    <div class="fw-bold text-success">₹680</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary small">
+                            <span class="text-light">
+                                <span class="text-success">✔</span> Physical Bill Verified
+                            </span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">Settled by Treasurer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. THE PROBLEM & PHILOSOPHY: WHY SHANTIPUR FINANCE EXISTS -->
+    <section class="py-5 border-top border-secondary-subtle" style="background: rgba(18, 23, 34, 0.4);">
+        <div class="container">
+            <div class="text-center max-w-700 mx-auto mb-5">
+                <span class="text-warning fw-semibold text-uppercase small letter-spacing-1">The Devotional Dilemma</span>
+                <h2 class="text-light fw-bold mt-1">Why Traditional Accounting Fails Devotional Ashrams</h2>
+                <p class="text-secondary">
+                    Ashrams don't run like commercial corporations. They run on cash advances for bazaar shopping, fast-moving prasadam kitchens, and volunteer seva.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="saas-card card-hover p-4 h-100">
+                        <div class="feature-icon-box">❌</div>
+                        <h5 class="text-light fw-bold">The "Pocket Change" Leakage</h5>
+                        <p class="text-secondary small">
+                            A volunteer takes ₹3,000 for festival decorations, spends ₹2,450, and forgets the remaining ₹550 in their kurta pocket. Without a tracking ledger, weeks pass and Lakshmi is unaccounted for.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="saas-card card-hover p-4 h-100">
+                        <div class="feature-icon-box emerald">🧾</div>
+                        <h5 class="text-light fw-bold">The Missing Voucher Nightmare</h5>
+                        <p class="text-secondary small">
+                            Months later when temple audits happen, crumpled receipts are missing or unreadable. Shantipur enforces instant digital tracking with explicit bill presence checks for every entry.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="saas-card card-hover p-4 h-100">
+                        <div class="feature-icon-box sky">💸</div>
+                        <h5 class="text-light fw-bold">Commercial SaaS Greed</h5>
+                        <p class="text-secondary small">
+                            Corporate tools charge ₹1,500 to ₹4,000 per user every month. Ashrams survive on donor charity and cannot bleed sacred seva funds on software licenses. We are 100% donation-sustained.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. INTERACTIVE SIMULATOR (HANDS-ON TOOL) -->
+    <section id="simulator" class="py-5 position-relative">
+        <div class="container">
+            <div class="text-center max-w-700 mx-auto mb-5">
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1 mb-2">TRY IT YOURSELF</span>
+                <h2 class="text-light fw-bold font-cinzel">Interactive Seva Advance Simulator</h2>
+                <p class="text-secondary">
+                    Slide the controls below to experience how Shantipur Finance instantly computes exact change return and enforces bill accountability.
+                </p>
+            </div>
+
+            <div class="simulator-box p-4 p-md-5 mx-auto" style="max-width: 900px;">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0 fw-semibold">1. Advance Taken from Cashbox:</label>
+                                <span class="fw-bold text-warning fs-5" id="simAdvanceDisplay">₹5,000</span>
+                            </div>
+                            <input type="range" class="form-range slider-custom w-100" id="simAdvance" min="500" max="25000" step="250" value="5000">
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.75rem;">
+                                <span>₹500</span>
+                                <span>₹10,000</span>
+                                <span>₹25,000</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0 fw-semibold">2. Actual Amount Spent:</label>
+                                <span class="fw-bold text-light fs-5" id="simUsedDisplay">₹3,850</span>
+                            </div>
+                            <input type="range" class="form-range slider-custom w-100" id="simUsed" min="0" max="5000" step="50" value="3850">
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.75rem;">
+                                <span>₹0 (Full Return)</span>
+                                <span>Exact Advance</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">3. Expense Category:</label>
+                            <select class="form-select" id="simCategory">
+                                <option value="Kitchen Food">🍲 Kitchen Food &amp; Prasadam</option>
+                                <option value="Petrol">⛽ Petrol &amp; Vehicle Seva</option>
+                                <option value="item purchasing">🛍️ Item Purchasing / Hardware</option>
+                                <option value="Necessities">🪔 Necessities &amp; Deity Dept</option>
+                                <option value="Other">📦 Other Seva Services</option>
+                            </select>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" role="switch" id="simBill" checked>
+                            <label class="form-check-label text-light fw-semibold" for="simBill">
+                                Physical / Digital Bill Collected
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Output Box -->
+                    <div class="col-lg-6">
+                        <div class="bg-dark p-4 rounded-4 border border-secondary shadow">
+                            <h6 class="text-secondary text-uppercase small letter-spacing-1 mb-3">Audit Reconciliation Preview</h6>
+
+                            <div class="p-3 rounded-3 mb-3 bg-body-tertiary border border-secondary-subtle">
+                                <div class="text-secondary small mb-1">DUE BACK TO TEMPLE CASHIER</div>
+                                <div class="stat-metric text-success" id="simReturnDisplay">₹1,150</div>
+                                <div class="text-muted small mt-1" id="simReturnNote">
+                                    Volunteer must return this amount to the treasurer.
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between py-2 border-bottom border-secondary-subtle small">
+                                <span class="text-secondary">Category:</span>
+                                <span class="text-light fw-semibold" id="simCategoryText">Kitchen Food</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-2 border-bottom border-secondary-subtle small">
+                                <span class="text-secondary">Bill Status:</span>
+                                <span id="simBillStatus" class="fw-semibold text-success">✔ Bill Verified</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-2 border-bottom border-secondary-subtle small">
+                                <span class="text-secondary">Settlement Status:</span>
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle" id="simSettlementBadge">
+                                    Pending Settle
+                                </span>
+                            </div>
+
+                            <button type="button" class="btn btn-gold w-100 mt-4 fw-semibold" id="simSettleBtn">
+                                ⚖️ Simulate Treasurer Settlement
+                            </button>
+                            <div id="simToast" class="alert alert-success mt-2 py-2 small d-none text-center">
+                                ✨ Settle recorded with audit timestamp!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. BUILT FOR EVERY SEVA ROLE (INTERACTIVE PERSONA TABS) -->
+    <section class="py-5 bg-dark bg-opacity-50 border-top border-secondary-subtle">
+        <div class="container">
+            <div class="text-center max-w-700 mx-auto mb-4">
+                <span class="text-warning fw-semibold text-uppercase small letter-spacing-1">Tailored Workflows</span>
+                <h2 class="text-light fw-bold font-cinzel">One Unified Platform for All Seva Roles</h2>
+                <p class="text-secondary">
+                    From temple presidents and head cooks to weekend youth volunteers, everyone enjoys a streamlined experience.
+                </p>
+            </div>
+
+            <ul class="nav nav-pills persona-nav justify-content-center gap-2 mb-4" id="personaTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="manager-tab" data-bs-toggle="pill" data-bs-target="#manager" type="button" role="tab">
+                        🏛️ Center Managers &amp; Treasurers
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="incharge-tab" data-bs-toggle="pill" data-bs-target="#incharge" type="button" role="tab">
+                        👨‍🍳 Department In-Charges
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="volunteer-tab" data-bs-toggle="pill" data-bs-target="#volunteer" type="button" role="tab">
+                        🚶‍♂️ Devotee Volunteers
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content mx-auto" style="max-width: 850px;" id="personaTabContent">
+                <!-- Manager Persona -->
+                <div class="tab-pane fade show active" id="manager" role="tabpanel">
+                    <div class="saas-card p-4 p-md-5 border border-secondary">
+                        <div class="row align-items-center g-4">
+                            <div class="col-md-7">
+                                <h4 class="text-warning fw-bold mb-3">Total Governance Over Temple Funds</h4>
+                                <ul class="list-unstyled d-flex flex-column gap-2 text-secondary small">
+                                    <li class="d-flex align-items-start gap-2">
+                                        <span class="text-success">✔</span>
+                                        <span><strong>Multi-Center Switching:</strong> Oversee multiple preaching centers, youth bases, or farm projects under one single account.</span>
+                                    </li>
+                                    <li class="d-flex align-items-start gap-2">
+                                        <span class="text-success">✔</span>
+                                        <span><strong>One-Click Bulk Settlement:</strong> Reconcile 50 purchases in seconds during weekly audit meetings.</span>
+                                    </li>
+                                    <li class="d-flex align-items-start gap-2">
+                                        <span class="text-success">✔</span>
+                                        <span><strong>Volunteer Role Management:</strong> Invite devotees via secure email tokens and grant Manager, In-Charge, or Volunteer roles.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-5 text-center">
+                                <div class="p-3 bg-body-tertiary rounded-3 border border-secondary">
+                                    <div class="fs-1">📊</div>
+                                    <div class="fw-bold text-light mt-2">Treasurer Audit Mode</div>
+                                    <div class="text-muted small">Zero unaccounted cash</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- In-Charge Persona -->
+                <div class="tab-pane fade" id="incharge" role="tabpanel">
+                    <div class="saas-card p-4 p-md-5 border border-secondary">
+                        <div class="row align-items-center g-4">
+                            <div class="col-md-7">
+                                <h4 class="text-warning fw-bold mb-3">Control Over Department Budgets</h4>
+                                <ul class="list-unstyled d-flex flex-column gap-2 text-secondary small">
+                                    <li class="d-flex align-items-start gap-2">
+                                        <span class="text-success">✔</span>
+                                        <span><strong>Categorized Allocations:</strong> Segregate Kitchen Food, Petrol, Maintenance, and Festival items effortlessly.</span>
+                                    </li>
+                                    <li class="d-flex align-items-start gap-2">
+                                        <span class="text-success">✔</span>
+                                        <span><strong>Receipt Enforcement:</strong> Flag missing bills immediately so receipts don't vanish into thin air.</span>
+                                    </li>
+                                    <li class="d-flex align-items-start gap-2">
+                                        <span class="text-success">✔</span>
+                                        <span><strong>Expense Modification Rights:</strong> Update details or correction notes before final settlement.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-5 text-center">
+                                <div class="p-3 bg-body-tertiary rounded-3 border border-secondary">
+                                    <div class="fs-1">🍲</div>
+                                    <div class="fw-bold text-light mt-2">Prasadam &amp; Procurement</div>
+                                    <div class="text-muted small">Budget discipline without delays</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Volunteer Persona -->
+                <div class="tab-pane fade" id="volunteer" role="tabpanel">
+                    <div class="saas-card p-4 p-md-5 border border-secondary">
+                        <div class="row align-items-center g-4">
+                            <div class="col-md-7">
+                                <h4 class="text-warning fw-bold mb-3">Log Purchases in 15 Seconds</h4>
+                                <ul class="list-unstyled d-flex flex-column gap-2 text-secondary small">
+                                    <li class="d-flex align-items-start gap-2">
+                                        <span class="text-success">✔</span>
+                                        <span><strong>Mobile-Friendly Entry:</strong> Type amount taken, amount spent, check the bill box, and submit right from the market.</span>
+                                    </li>
+                                    <li class="d-flex align-items-start gap-2">
+                                        <span class="text-success">✔</span>
+                                        <span><strong>Clear Conscience:</strong> Instant feedback on how much change needs to be handed back to the cashbox.</span>
+                                    </li>
+                                    <li class="d-flex align-items-start gap-2">
+                                        <span class="text-success">✔</span>
+                                        <span><strong>Personal History:</strong> Review all past seva expenses you have logged.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-5 text-center">
+                                <div class="p-3 bg-body-tertiary rounded-3 border border-secondary">
+                                    <div class="fs-1">📱</div>
+                                    <div class="fw-bold text-light mt-2">Frictionless Bazaar Log</div>
+                                    <div class="text-muted small">Focus on seva, not paperwork</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. THE DONATION-BASED SAAS MANIFESTO -->
+    <section class="py-5 border-top border-secondary-subtle">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <span class="badge bg-warning text-dark fw-bold px-3 py-1 mb-2">OUR BUSINESS MODEL</span>
+                    <h2 class="text-light fw-bold font-cinzel mb-3">
+                        Why Shantipur Finance is 100% Donation-Based
+                    </h2>
+                    <p class="text-secondary mb-3">
+                        Most modern software companies operate on extractive subscription tiers: locking essential reporting behind enterprise plans, charging per volunteer seat, and holding your data hostage.
+                    </p>
+                    <p class="text-secondary mb-4">
+                        We reject this model. In Vedic culture, spiritual projects, goshalas, and temples are holy services. Shantipur Finance is built as an offering of love and devotion (seva) to the Vaishnava community. 
+                    </p>
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 bg-dark rounded-3 border border-secondary">
+                                <div class="fw-bold text-warning fs-4">₹0</div>
+                                <div class="text-light small fw-semibold">Mandatory Fees</div>
+                                <div class="text-secondary" style="font-size: 0.75rem;">Every center gets full features</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-dark rounded-3 border border-secondary">
+                                <div class="fw-bold text-success fs-4">100%</div>
+                                <div class="text-light small fw-semibold">Voluntary Support</div>
+                                <div class="text-secondary" style="font-size: 0.75rem;">Sustained by grateful centers</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="saas-card p-4 border border-warning-subtle shadow position-relative">
+                        <h5 class="text-light fw-bold mb-3">Commercial Tools vs. Shantipur Finance</h5>
+
+                        <div class="d-flex justify-content-between p-2 mb-2 rounded bg-danger bg-opacity-10 border border-danger-subtle small">
+                            <span class="text-danger">✖ Commercial SaaS</span>
+                            <span class="text-secondary">₹2,000 - ₹5,000 / month recurring fee</span>
+                        </div>
+                        <div class="d-flex justify-content-between p-2 mb-2 rounded bg-danger bg-opacity-10 border border-danger-subtle small">
+                            <span class="text-danger">✖ Commercial SaaS</span>
+                            <span class="text-secondary">Pay-per-user penalties for adding volunteers</span>
+                        </div>
+                        <div class="d-flex justify-content-between p-2 mb-3 rounded bg-danger bg-opacity-10 border border-danger-subtle small">
+                            <span class="text-danger">✖ Commercial SaaS</span>
+                            <span class="text-secondary">Unrelated corporate features &amp; bloat</span>
+                        </div>
+
+                        <hr class="border-secondary my-3">
+
+                        <div class="d-flex justify-content-between p-2 mb-2 rounded bg-success bg-opacity-10 border border-success-subtle small">
+                            <span class="text-success fw-bold">✔ Shantipur Seva</span>
+                            <span class="text-light">Free for all verified ashrams &amp; centers</span>
+                        </div>
+                        <div class="d-flex justify-content-between p-2 mb-2 rounded bg-success bg-opacity-10 border border-success-subtle small">
+                            <span class="text-success fw-bold">✔ Shantipur Seva</span>
+                            <span class="text-light">Unlimited volunteers &amp; managers per center</span>
+                        </div>
+                        <div class="d-flex justify-content-between p-2 rounded bg-success bg-opacity-10 border border-success-subtle small">
+                            <span class="text-success fw-bold">✔ Shantipur Seva</span>
+                            <span class="text-light">Sustained purely on voluntary donations</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. FREQUENTLY ASKED QUESTIONS -->
+    <section class="py-5 bg-dark bg-opacity-25 border-top border-secondary-subtle">
+        <div class="container max-w-700 mx-auto">
+            <div class="text-center mb-4">
+                <span class="text-warning fw-semibold text-uppercase small letter-spacing-1">Clarity &amp; Answers</span>
+                <h2 class="text-light fw-bold font-cinzel">Frequently Asked Questions</h2>
+            </div>
+
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading1">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1">
+                            How do I get our temple or ashram registered?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Simply <a href="{% url 'signup' %}" class="text-warning">create an account</a> and navigate to the <strong>Register Center</strong> page. Enter your center’s name, unique code, and location. Once a platform administrator approves it, you automatically become the Center Manager and can invite your team.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2">
+                            Can volunteers from other centers view our financial records?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            No. Shantipur Finance enforces strict multi-tenant center isolation. Users can only see records for the specific center(s) they have been granted active membership in.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3">
+                            Who can settle expenses and mark advances returned?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Only authorized <strong>Center Managers</strong>, <strong>In-Charges</strong>, and platform administrators can settle expenses. Each settlement logs the auditor’s identity and timestamp for tamper-proof accountability.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4">
+                            Is there really no cost to use this platform?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes. The platform is offered free as seva. If your center finds it valuable and wishes to assist with server hosting and ongoing development costs, you can contribute voluntarily on our donation page.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. CALL TO ACTION BANNER -->
+    <section class="py-5 text-center border-top border-secondary-subtle">
+        <div class="container py-4">
+            <h2 class="text-light fw-bold font-cinzel mb-3">Begin Transparent Seva Accounting Today</h2>
+            <p class="text-secondary max-w-700 mx-auto mb-4">
+                Join our network of centers dedicated to absolute financial clarity and devotion. Setup takes less than 2 minutes.
+            </p>
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <a href="{% url 'signup' %}" class="btn btn-gold btn-lg px-4">
+                    Register Your Account
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">
+                    Center Sign In
+                </a>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+{% else %}
+<!-- ========================================================= -->
+<!-- AUTHENTICATED CENTER LEDGER & TRANSACTIONS OVERVIEW VIEW   -->
+<!-- ========================================================= -->
+<div class="container py-4">
+    <!-- Active Center Header & Actions -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 pb-3 border-bottom border-secondary-subtle">
         <div>
-            <h3 class="text-white">
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="text-light fw-bold mb-0">
+                    {% if active_center %}
+                        {{ active_center.name }}
+                    {% else %}
+                        ISKCON Center Finance Management
+                    {% endif %}
+                </h2>
                 {% if active_center %}
-                    {{ active_center.name }} - Money Management
-                {% else %}
-                    ISKCON Center Finance Management
+                    <span class="badge bg-warning text-dark fw-bold">{{ active_center.code }}</span>
                 {% endif %}
-            </h3>
-            <p class="text-muted mb-0">
+            </div>
+            <p class="text-secondary small mb-0 mt-1">
                 {% if active_center %}
-                    Center Code: <code>{{ active_center.code }}</code> | City: {{ active_center.city|default:"—" }}
+                    📍 {{ active_center.city|default:"Location" }}, {{ active_center.state|default:"India" }} • Seva Expense Ledger
                 {% else %}
-                    Please log in with an authorized center account to view records.
+                    You do not currently have an active center assigned.
                 {% endif %}
             </p>
         </div>
+
         <div class="d-flex gap-2 align-items-center flex-wrap">
             {% if user_centers and user_centers.count > 1 %}
             <div class="dropdown">
-                <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown">
-                    Center: {{ active_center.name|truncatechars:18 }}
+                <button class="btn btn-outline-secondary dropdown-toggle btn-sm text-light" type="button" data-bs-toggle="dropdown">
+                    Switch Center: {{ active_center.name|truncatechars:15 }}
                 </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
+                <ul class="dropdown-menu dropdown-menu-dark shadow">
                     {% for c in user_centers %}
                     <li><a class="dropdown-item {% if c.id == active_center.id %}active{% endif %}" href="?center={{ c.id }}">{{ c.name }}</a></li>
                     {% endfor %}
@@ -66,76 +602,93 @@
             </div>
             {% endif %}
 
-            {% if request.user.is_authenticated and active_center %}
-                <a href="{% url 'addpost' %}" class="btn btn-success">Add Entry</a>
-                <a href="{% url 'dashboard' %}" class="btn btn-outline-light">Dashboard</a>
-            {% elif not request.user.is_authenticated %}
-                <a href="{% url 'login' %}" class="btn btn-primary">Login to View Records</a>
+            {% if active_center %}
+                <a href="{% url 'addpost' %}" class="btn btn-gold btn-sm d-flex align-items-center gap-1">
+                    <span>➕</span> Add Entry
+                </a>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm">
+                    📊 Dashboard
+                </a>
+            {% else %}
+                <a href="{% url 'apply_center' %}" class="btn btn-warning btn-sm">
+                    📝 Register or Join a Center
+                </a>
             {% endif %}
         </div>
     </div>
 
     {% if posts %}
-    <div class="table-responsive">
-        <table class="table align-middle mb-0 bg-white table-hover rounded overflow-hidden">
-            <thead style="color: rgb(6, 5, 5); background-color: rgb(67, 213, 86);">
+    <!-- Filter bar -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <span class="text-secondary small fw-semibold">Transactions ({{ posts.count }} Total)</span>
+        </div>
+        <div class="text-secondary small font-monospace">
+            Tap rows to review full details
+        </div>
+    </div>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive saas-card overflow-hidden">
+        <table class="table-custom mb-0">
+            <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Name</th>
+                    <th># ID</th>
+                    <th>Devotee / Date</th>
                     <th>Category</th>
-                    <th>Items</th>
-                    <th>Amount Taken</th>
-                    <th>Amount Used</th>
+                    <th>Items &amp; Details</th>
+                    <th>Taken</th>
+                    <th>Used</th>
                     <th>Bill</th>
-                    <th>To Be Returned</th>
-                    <th>Settled</th>
-                    <th>Action</th>
+                    <th>Return Due</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
                 </tr>
             </thead>
             <tbody>
                 {% for p in posts %}
-                <tr class="block_ard">
+                <tr class="ledger-row">
                     <td>
-                        <strong>{{ p.id }}</strong>
+                        <span class="text-muted font-monospace">#{{ p.id }}</span>
                     </td>
                     <td>
-                        <div>
-                            <span class="fw-bold d-block">{{ p.user.get_full_name|default:p.user.username }}</span>
-                            <small class="text-muted">{{ p.date|date:"d M Y, h:i A" }}</small>
-                        </div>
+                        <div class="fw-semibold text-light">{{ p.user.get_full_name|default:p.user.username }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">{{ p.date|date:"d M Y, h:i A" }}</div>
                     </td>
                     <td>
-                        <span class="badge bg-secondary">{{ p.category }}</span>
+                        <span class="badge-category">{{ p.category }}</span>
                     </td>
-                    <td>
+                    <td class="text-secondary small" style="max-width: 200px;">
                         {{ p.desc|default:"—" }}
                     </td>
                     <td>
-                        <span>{{ p.amount_taken }} Rs.</span>
+                        <span class="text-light fw-semibold">₹{{ p.amount_taken }}</span>
                     </td>
                     <td>
-                        <span>{{ p.amount_used }} Rs.</span>
+                        <span class="text-warning fw-semibold">₹{{ p.amount_used }}</span>
                     </td>
                     <td>
                         {% if p.bill %}
-                            <img width="24" height="24" src="{% static 'images/square-check-regular.svg' %}" alt="Bill Present" title="Bill Present">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle" title="Bill present">✔ Bill</span>
                         {% else %}
-                            <img width="24" height="24" src="{% static 'images/square-regular.svg' %}" alt="No Bill" title="No Bill">
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle" title="No bill attached">✖ Missing</span>
                         {% endif %}
                     </td>
                     <td>
-                        <strong class="text-dark">{{ p.to_be_returned }} Rs.</strong>
+                        <span class="fw-bold {% if p.to_be_returned > 0 %}text-success{% else %}text-light{% endif %}">
+                            ₹{{ p.to_be_returned }}
+                        </span>
                     </td>
                     <td>
                         {% if p.remaining %}
-                            <span class="badge bg-success">Settled</span>
+                            <span class="badge-settled">Settled</span>
                         {% else %}
-                            <span class="badge bg-danger">Pending</span>
+                            <span class="badge-pending">Pending</span>
                         {% endif %}
                     </td>
-                    <td>
+                    <td class="text-end">
                         {% if request.user == p.user or request.user.is_staff or perms.main.change_post %}
-                            <a href="{% url 'updatepost' p.id %}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{% url 'updatepost' p.id %}" class="btn btn-outline-secondary btn-sm py-0 px-2" style="font-size: 0.8rem;">Edit</a>
                         {% endif %}
                     </td>
                 </tr>
@@ -144,35 +697,121 @@
         </table>
     </div>
 
-    <div class="text-center load_more my-3">
-        <div id="load" class="load_more_button text-center">Load More</div>
+    <div class="text-center mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm px-4">
+            View Full Financial Reports &amp; Settle in Dashboard →
+        </a>
     </div>
+
     {% else %}
-    <div class="alert alert-warning text-center mt-3">
-        <h4>No records found</h4>
-        <p>No expenses or records have been created yet.</p>
+    <div class="saas-card p-5 text-center my-4">
+        <div class="fs-1 mb-2">📜</div>
+        <h4 class="text-light fw-bold">No Expenses Recorded Yet</h4>
+        <p class="text-secondary max-w-700 mx-auto mb-4">
+            There are no transactions recorded for <strong>{{ active_center.name|default:"this center" }}</strong>. Log your first advance or purchase to start tracking!
+        </p>
+        {% if active_center %}
+            <a href="{% url 'addpost' %}" class="btn btn-gold">
+                ➕ Add First Expense Entry
+            </a>
+        {% else %}
+            <a href="{% url 'apply_center' %}" class="btn btn-warning">
+                📝 Register Center Application
+            </a>
+        {% endif %}
     </div>
     {% endif %}
 </div>
+{% endif %}
+{% endblock main_layout %}
 
+{% block extra_scripts %}
 <script>
+    // Interactive Simulator Script for Pre-login Landing Page
     document.addEventListener("DOMContentLoaded", function () {
-        if (typeof jQuery !== "undefined") {
-            var items = $(".block_ard");
-            items.slice(0, 10).show();
+        const simAdvance = document.getElementById("simAdvance");
+        const simUsed = document.getElementById("simUsed");
+        const simCategory = document.getElementById("simCategory");
+        const simBill = document.getElementById("simBill");
 
-            if ($(".block_ard:hidden").length === 0) {
-                $("#load").hide();
+        const simAdvanceDisplay = document.getElementById("simAdvanceDisplay");
+        const simUsedDisplay = document.getElementById("simUsedDisplay");
+        const simReturnDisplay = document.getElementById("simReturnDisplay");
+        const simCategoryText = document.getElementById("simCategoryText");
+        const simBillStatus = document.getElementById("simBillStatus");
+        const simReturnNote = document.getElementById("simReturnNote");
+        const simSettleBtn = document.getElementById("simSettleBtn");
+        const simToast = document.getElementById("simToast");
+        const simSettlementBadge = document.getElementById("simSettlementBadge");
+
+        if (simAdvance && simUsed) {
+            function updateSimulator() {
+                const advance = parseInt(simAdvance.value, 10);
+                let used = parseInt(simUsed.value, 10);
+
+                // Prevent used from exceeding advance
+                simUsed.max = advance;
+                if (used > advance) {
+                    used = advance;
+                    simUsed.value = advance;
+                }
+
+                const returned = advance - used;
+
+                simAdvanceDisplay.textContent = "₹" + advance.toLocaleString("en-IN");
+                simUsedDisplay.textContent = "₹" + used.toLocaleString("en-IN");
+                simReturnDisplay.textContent = "₹" + returned.toLocaleString("en-IN");
+
+                if (returned === 0) {
+                    simReturnNote.textContent = "Advance fully spent for seva. Zero cash due.";
+                } else {
+                    simReturnNote.textContent = "Volunteer must return ₹" + returned.toLocaleString("en-IN") + " to the cashier.";
+                }
+
+                if (simCategoryText && simCategory) {
+                    simCategoryText.textContent = simCategory.options[simCategory.selectedIndex].text.replace(/^[^\s]+\s/, '');
+                }
+
+                if (simBillStatus && simBill) {
+                    if (simBill.checked) {
+                        simBillStatus.innerHTML = '<span class="text-success">✔ Bill Verified</span>';
+                    } else {
+                        simBillStatus.innerHTML = '<span class="text-danger">✖ Missing Voucher</span>';
+                    }
+                }
+
+                // Reset simulated badge
+                if (simSettlementBadge) {
+                    simSettlementBadge.className = "badge bg-warning-subtle text-warning border border-warning-subtle";
+                    simSettlementBadge.textContent = "Pending Settle";
+                }
+                if (simToast) {
+                    simToast.classList.add("d-none");
+                }
             }
 
-            $("#load").on("click", function (e) {
-                e.preventDefault();
-                $(".block_ard:hidden").slice(0, 10).fadeIn();
-                if ($(".block_ard:hidden").length === 0) {
-                    $("#load").text("No More to View").fadeOut("slow");
-                }
-            });
+            simAdvance.addEventListener("input", updateSimulator);
+            simUsed.addEventListener("input", updateSimulator);
+            if (simCategory) simCategory.addEventListener("change", updateSimulator);
+            if (simBill) simBill.addEventListener("change", updateSimulator);
+
+            if (simSettleBtn) {
+                simSettleBtn.addEventListener("click", function () {
+                    if (simSettlementBadge) {
+                        simSettlementBadge.className = "badge bg-success-subtle text-success border border-success-subtle";
+                        simSettlementBadge.textContent = "✔ Settled & Audited";
+                    }
+                    if (simToast) {
+                        simToast.classList.remove("d-none");
+                        setTimeout(() => {
+                            simToast.classList.add("d-none");
+                        }, 3500);
+                    }
+                });
+            }
+
+            updateSimulator();
         }
     });
 </script>
-{% endblock content %}
+{% endblock extra_scripts %}

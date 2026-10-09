@@ -1,0 +1,70 @@
+{% load static %}
+<footer class="site-footer mt-auto border-top border-secondary-subtle">
+    <div class="footer-glow"></div>
+    <div class="container py-5">
+        <div class="row g-4 justify-content-between">
+            <div class="col-lg-4 col-md-6">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="fs-4">🏛️</span>
+                    <span class="fw-bold fs-5 text-light font-cinzel">Shantipur <span class="text-warning">Finance</span></span>
+                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 ms-1 small">Non-Profit</span>
+                </div>
+                <p class="text-secondary small mb-3 lh-base">
+                    Dedicated to transparent seva stewardship, cashbox advance tracking, and multi-center accounting for temples, ashrams, and devotional projects.
+                </p>
+                <div class="d-flex align-items-center gap-2 text-warning small font-monospace">
+                    <span>🕉️</span>
+                    <em>"Not a single paisa wasted in Krishna's seva."</em>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6 col-6">
+                <h6 class="text-light fw-semibold text-uppercase small letter-spacing-1 mb-3">Platform</h6>
+                <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+                    <li><a href="/" class="footer-link">Home &amp; Overview</a></li>
+                    <li><a href="{% url 'about' %}" class="footer-link">Seva Guidelines</a></li>
+                    {% if request.user.is_authenticated %}
+                        <li><a href="{% url 'dashboard' %}" class="footer-link">Dashboard</a></li>
+                        <li><a href="{% url 'addpost' %}" class="footer-link">Add Expense</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}" class="footer-link">Member Sign In</a></li>
+                        <li><a href="{% url 'signup' %}" class="footer-link">Create Account</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6 col-6">
+                <h6 class="text-light fw-semibold text-uppercase small letter-spacing-1 mb-3">Centers</h6>
+                <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+                    <li><a href="{% url 'apply_center' %}" class="footer-link">Register New Center</a></li>
+                    <li><a href="{% url 'about' %}#donation-model" class="footer-link">Donation Model</a></li>
+                    <li><a href="{% url 'about' %}#rules" class="footer-link">Audit Standards</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="donation-card p-3 rounded-3 border border-warning-subtle">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-warning text-dark fw-bold">Donation Supported</span>
+                        <span class="small text-secondary">100% Free Seva</span>
+                    </div>
+                    <p class="small text-secondary mb-2">
+                        This platform operates with zero subscription fees. Hosting, maintenance, and developments are sustained through voluntary contributions from devotees.
+                    </p>
+                    <a href="{% url 'about' %}#donation-model" class="btn btn-sm btn-outline-warning w-100 fw-semibold">
+                        Learn How We Sustain →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row pt-4 mt-4 border-top border-secondary-subtle align-items-center">
+            <div class="col-md-6 text-center text-md-start small text-secondary">
+                © {% now "Y" %} Shantipur Finance Management. Developed as devotional seva.
+            </div>
+            <div class="col-md-6 text-center text-md-end small text-secondary mt-2 mt-md-0">
+                <span class="text-warning">Hare Krishna Hare Rama</span> • All Glories to Sri Sri Radha Shyamsundar
+            </div>
+        </div>
+    </div>
+</footer>

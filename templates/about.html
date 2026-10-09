@@ -1,35 +1,264 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<div class="col-md-8 mx-auto my-5">
-    <div class="card bg-dark text-white border-secondary shadow">
-        <div class="card-header border-secondary text-center py-3">
-            <h3 class="mb-0">Important Guidelines & Rules</h3>
+{% block title %}Seva Ethics, Financial Guidelines &amp; Donation Model | Shantipur Finance{% endblock title %}
+
+{% block main_layout %}
+<div class="container py-5">
+    <!-- Header Banner -->
+    <div class="text-center max-w-700 mx-auto mb-5">
+        <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1 mb-2">SACRED TRUST</span>
+        <h1 class="text-light fw-bold font-cinzel">Seva Ethics &amp; Financial Standards</h1>
+        <p class="text-secondary">
+            In the Vaishnava tradition, financial stewardship is not mundane bureaucracy—it is a direct practice of devotional integrity. Here are our core operational guidelines.
+        </p>
+    </div>
+
+    <!-- Deity Image & Spiritual Invocation Card -->
+    <div class="saas-card p-4 p-md-5 mb-5 border border-warning-subtle text-center position-relative overflow-hidden">
+        <div class="row align-items-center g-4">
+            <div class="col-md-5">
+                <div class="position-relative d-inline-block">
+                    <img src="{% static 'images/rsp.jpeg' %}" alt="Sri Sri Radha Shyamsundar" class="img-fluid rounded-4 shadow-lg border border-warning" style="max-height: 380px; object-fit: cover;">
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x mb-2 badge bg-dark bg-opacity-75 text-warning border border-warning-subtle px-3 py-1">
+                        Sri Sri Radha Shyamsundar
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 text-md-start">
+                <div class="d-flex align-items-center gap-2 text-warning mb-2 font-cinzel">
+                    <span>🕉️</span>
+                    <span class="fw-bold fs-5">Sri Shantipur Dhama Heritage</span>
+                </div>
+                <h3 class="text-light fw-bold mb-3">
+                    "Not a Single Paisa Wasted in Krishna's Seva"
+                </h3>
+                <p class="text-secondary lh-base mb-3">
+                    Srila Prabhupada instructed that temple funds are sacred Lakshmi offered with great devotion by donors and congregation members. When a devotee handles cash advances for the kitchen, deities, or festivals, they act as a trustee of the Lord.
+                </p>
+                <div class="p-3 rounded-3 bg-dark bg-opacity-75 border border-secondary mb-3">
+                    <div class="fw-bold text-light small mb-1">Srila Prabhupada's Directive:</div>
+                    <div class="text-warning small fst-italic">
+                        "Krishna's money must be spent very carefully, not a farthing wasted. You must keep very strict accounts of income and expenditure."
+                    </div>
+                </div>
+                <div class="text-muted small">
+                    — Letters on Deity Worship &amp; Center Management
+                </div>
+            </div>
         </div>
-        <div class="card-body p-4 text-center">
-            <img src="{% static 'images/rsp.jpeg' %}" alt="Radha Shyamsundar" class="img-fluid rounded mb-4 shadow" style="max-height: 350px; object-fit: cover;">
-            
-            <div class="text-start mt-3">
-                <h5 class="text-warning mb-3">Guidelines for logging purchases:</h5>
-                <ul class="list-group list-group-flush bg-dark text-white">
-                    <li class="list-group-item bg-dark text-white border-secondary">
-                        <strong>1. Item Details:</strong> Any purchased items can be added here. Please describe the items with amount breakdown clearly in brief.
-                    </li>
-                    <li class="list-group-item bg-dark text-white border-secondary">
-                        <strong>2. Bills & Receipts:</strong> Try to collect and retain all physical or digital bills compulsorily. Bills will be collected for reconciliation.
-                    </li>
-                    <li class="list-group-item bg-dark text-white border-secondary">
-                        <strong>3. Prompt Settlement:</strong> Please settle returns and remaining amounts promptly.
-                    </li>
-                </ul>
+    </div>
+
+    <!-- The 4 Golden Pillars of Seva Accounting -->
+    <div class="row g-4 mb-5" id="rules">
+        <div class="col-12 text-center mb-2">
+            <span class="text-warning fw-semibold text-uppercase small letter-spacing-1">Standards</span>
+            <h2 class="text-light fw-bold font-cinzel">The 4 Golden Pillars for Every Purchaser</h2>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="saas-card card-hover p-4 h-100 border border-secondary">
+                <div class="feature-icon-box">1️⃣</div>
+                <h5 class="text-light fw-bold">Itemized Accuracy</h5>
+                <p class="text-secondary small mb-0">
+                    Never log vague labels like "miscellaneous items". Always record exact item descriptions, quantities, and pricing breakdowns for total transparency.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="saas-card card-hover p-4 h-100 border border-secondary">
+                <div class="feature-icon-box emerald">2️⃣</div>
+                <h5 class="text-light fw-bold">Mandatory Receipts</h5>
+                <p class="text-secondary small mb-0">
+                    Always request printed tax bills or signed vendor vouchers from local bazaar merchants. Retain paper bills physically for weekly cashier reconciliation.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="saas-card card-hover p-4 h-100 border border-secondary">
+                <div class="feature-icon-box sky">3️⃣</div>
+                <h5 class="text-light fw-bold">Immediate Settlement</h5>
+                <p class="text-secondary small mb-0">
+                    Never retain advance change in personal pockets. Settle the balance with the cashbox treasurer immediately upon returning to the ashram or temple.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="saas-card card-hover p-4 h-100 border border-secondary">
+                <div class="feature-icon-box">4️⃣</div>
+                <h5 class="text-light fw-bold">Devotional Trust</h5>
+                <p class="text-secondary small mb-0">
+                    Accounts are not an expression of suspicion; they are an act of protection. Clear accounting preserves cordial relations among devotees and eliminates anxiety.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE AUDIT READINESS CHECKLIST -->
+    <div class="saas-card p-4 p-md-5 mb-5 border border-secondary">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1 mb-2">INTERACTIVE TOOL</span>
+                <h3 class="text-light fw-bold mb-2">Pre-Entry Audit Checklist</h3>
+                <p class="text-secondary small mb-4">
+                    Before submitting an expense entry into Shantipur Finance, check each criterion below to verify whether your transaction meets the audit standards:
+                </p>
+
+                <div class="d-flex flex-column gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input audit-check" type="checkbox" id="check1">
+                        <label class="form-check-label text-light small fw-semibold" for="check1">
+                            1. I have counted the exact cash amount taken from the center cashbox.
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input audit-check" type="checkbox" id="check2">
+                        <label class="form-check-label text-light small fw-semibold" for="check2">
+                            2. I have collected physical bills, vendor slips, or digital receipts.
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input audit-check" type="checkbox" id="check3">
+                        <label class="form-check-label text-light small fw-semibold" for="check3">
+                            3. I kept temple funds completely isolated from personal wallet money.
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input audit-check" type="checkbox" id="check4">
+                        <label class="form-check-label text-light small fw-semibold" for="check4">
+                            4. I have verified the exact change due to return to the treasurer.
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-4 pt-3 border-top border-secondary text-muted">
-                <p class="mb-1">Hare Krishna!</p>
-                <p class="mb-0">Please pray for our seva and transparent accounting.</p>
+            <div class="col-lg-6">
+                <div class="p-4 rounded-4 bg-dark border border-secondary text-center">
+                    <h6 class="text-secondary text-uppercase small letter-spacing-1 mb-3">Audit Readiness Score</h6>
+                    
+                    <div class="display-4 fw-bold text-warning mb-2" id="auditScoreDisplay">0%</div>
+                    
+                    <div class="progress bg-secondary bg-opacity-25 mb-3" style="height: 10px;">
+                        <div class="progress-bar bg-warning" role="progressbar" id="auditProgressBar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+
+                    <div class="small fw-semibold text-secondary" id="auditFeedbackText">
+                        Check all 4 items to verify that your purchase is ready for settlement.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DONATION MODEL & SUSTAINABILITY SECTION -->
+    <div class="saas-card p-4 p-md-5 border border-warning-subtle" id="donation-model">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="badge bg-warning text-dark fw-bold px-3 py-1 mb-2">TRANSPARENT SUSTAINABILITY</span>
+                <h2 class="text-light fw-bold font-cinzel mb-3">The Donation-Based Sustainability Model</h2>
+                <p class="text-secondary lh-base mb-3">
+                    Shantipur Finance operates without subscription paywalls. There are no "Pro" or "Enterprise" plans locking centers out of features. 
+                </p>
+                <p class="text-secondary lh-base mb-4">
+                    Our platform hosting, database clusters, encrypted backups, and continuous development are sustained purely through voluntary contributions from satisfied ashrams, centers, and well-wishing devotees.
+                </p>
+
+                <div class="d-flex flex-column gap-2 mb-4">
+                    <div class="d-flex align-items-center gap-2 small text-light">
+                        <span class="text-success">✔</span> <strong>Zero Lock-in:</strong> Export your data anytime in standard format.
+                    </div>
+                    <div class="d-flex align-items-center gap-2 small text-light">
+                        <span class="text-success">✔</span> <strong>Open for All Temples:</strong> Large preaching bases or small rural ashrams get equal access.
+                    </div>
+                    <div class="d-flex align-items-center gap-2 small text-light">
+                        <span class="text-success">✔</span> <strong>Pure Seva Intent:</strong> Maintained with devotion, not commercial greed.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="donation-card p-4 border border-secondary shadow">
+                    <h5 class="text-warning fw-bold mb-3 d-flex align-items-center gap-2">
+                        <span>🤝</span> How Donations Are Deployed
+                    </h5>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small text-secondary mb-1">
+                            <span>Cloud Hosting &amp; High-Availability DBs</span>
+                            <span class="text-light fw-bold">45%</span>
+                        </div>
+                        <div class="progress bg-dark" style="height: 6px;">
+                            <div class="progress-bar bg-warning" style="width: 45%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small text-secondary mb-1">
+                            <span>Automated Backups &amp; Data Security</span>
+                            <span class="text-light fw-bold">35%</span>
+                        </div>
+                        <div class="progress bg-dark" style="height: 6px;">
+                            <div class="progress-bar bg-info" style="width: 35%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between small text-secondary mb-1">
+                            <span>Devotee Support &amp; Feature Development</span>
+                            <span class="text-light fw-bold">20%</span>
+                        </div>
+                        <div class="progress bg-dark" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 20%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-3 bg-dark bg-opacity-75 border border-secondary text-center small text-secondary">
+                        If your center wishes to support ongoing operations, contact your center manager or platform administrators to contribute towards the server fund.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock content %}
+{% endblock main_layout %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll(".audit-check");
+        const scoreDisplay = document.getElementById("auditScoreDisplay");
+        const progressBar = document.getElementById("auditProgressBar");
+        const feedbackText = document.getElementById("auditFeedbackText");
+
+        function updateChecklist() {
+            let checkedCount = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) checkedCount++;
+            });
+
+            const percent = (checkedCount / checkboxes.length) * 100;
+            if (scoreDisplay) scoreDisplay.textContent = Math.round(percent) + "%";
+            if (progressBar) progressBar.style.width = percent + "%";
+
+            if (percent === 100) {
+                feedbackText.innerHTML = '<span class="text-success fw-bold">✔ 100% Audit Ready! Safe to submit to center ledger.</span>';
+                if (scoreDisplay) scoreDisplay.className = "display-4 fw-bold text-success mb-2";
+                if (progressBar) progressBar.className = "progress-bar bg-success";
+            } else if (percent >= 50) {
+                feedbackText.innerHTML = '<span class="text-warning">In progress... Please complete all 4 requirements.</span>';
+                if (scoreDisplay) scoreDisplay.className = "display-4 fw-bold text-warning mb-2";
+                if (progressBar) progressBar.className = "progress-bar bg-warning";
+            } else {
+                feedbackText.textContent = "Check all 4 items to verify that your purchase is ready for settlement.";
+                if (scoreDisplay) scoreDisplay.className = "display-4 fw-bold text-danger mb-2";
+                if (progressBar) progressBar.className = "progress-bar bg-danger";
+            }
+        }
+
+        checkboxes.forEach(cb => cb.addEventListener("change", updateChecklist));
+    });
+</script>
+{% endblock extra_scripts %}

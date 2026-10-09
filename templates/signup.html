@@ -1,54 +1,148 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<div class="col-md-6 mx-auto my-5">
-    <div class="card bg-dark text-white border-secondary shadow">
-        <div class="card-header border-secondary text-center py-3">
-            <h4 class="mb-0">Create an Account</h4>
-            <small class="text-muted">Sign up to log and manage expenses</small>
-        </div>
-        <div class="card-body p-4">
-            {% if form.non_field_errors %}
-                {% for error in form.non_field_errors %}
-                    <div class="alert alert-danger">{{ error }}</div>
-                {% endfor %}
-            {% endif %}
+{% block title %}Create Account | Shantipur Finance Management{% endblock title %}
 
-            {% if invitation %}
-                <div class="alert alert-info py-2 mb-3">
-                    <div class="fw-bold">Invitation to {{ invitation.center.name }}</div>
-                    <small>You have been invited to join as <strong>{{ invitation.get_role_display }}</strong>.</small>
-                </div>
-            {% endif %}
+{% block main_layout %}
+<div class="container py-5 my-md-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+            <div class="saas-card overflow-hidden shadow-lg border border-secondary">
+                <div class="row g-0">
+                    <!-- Left Devotional Benefits Panel -->
+                    <div class="col-md-5 auth-sidebar-banner p-4 p-lg-5 d-flex flex-column justify-content-between">
+                        <div class="auth-glow"></div>
+                        <div class="position-relative z-1">
+                            <div class="d-flex align-items-center gap-2 mb-4">
+                                <span class="fs-2">🏛️</span>
+                                <span class="fw-bold fs-5 text-light font-cinzel">Shantipur <span class="text-warning">Finance</span></span>
+                            </div>
 
-            <form action="" method="post" novalidate>
-                {% csrf_token %}
-                {% for fm in form %}
-                {% if fm.is_hidden %}
-                    {{ fm }}
-                {% else %}
-                <div class="mb-3">
-                    <label class="form-label" for="{{ fm.id_for_label }}">{{ fm.label }}</label>
-                    {{ fm }}
-                    {% if fm.help_text %}
-                        <small class="form-text text-muted d-block mt-1">{{ fm.help_text }}</small>
-                    {% endif %}
-                    {% if fm.errors %}
-                        <div class="text-warning small mt-1">{{ fm.errors|striptags }}</div>
-                    {% endif %}
-                </div>
-                {% endif %}
-                {% endfor %}
+                            {% if invitation %}
+                                <div class="p-3 rounded-3 mb-4 bg-warning bg-opacity-10 border border-warning">
+                                    <span class="badge bg-warning text-dark fw-bold mb-1">OFFICIAL INVITATION</span>
+                                    <h5 class="text-light fw-bold mb-1">{{ invitation.center.name }}</h5>
+                                    <p class="text-secondary small mb-0">
+                                        You are invited to join as <strong class="text-warning">{{ invitation.get_role_display }}</strong>. Complete your signup below to activate your access.
+                                    </p>
+                                </div>
+                            {% else %}
+                                <h4 class="text-light fw-bold mb-3">
+                                    Join the Seva Network
+                                </h4>
+                                <p class="text-secondary small lh-base mb-4">
+                                    Create a free devotee account to record seva purchases, return advance balances, or apply to register your temple center.
+                                </p>
+                            {% endif %}
 
-                <div class="d-grid mt-4">
-                    <input type="submit" value="Sign Up" class="btn btn-primary">
+                            <ul class="list-unstyled d-flex flex-column gap-3 small text-secondary">
+                                <li class="d-flex align-items-start gap-2">
+                                    <span class="text-warning">✔</span>
+                                    <span><strong>100% Free:</strong> No license fees or subscription traps.</span>
+                                </li>
+                                <li class="d-flex align-items-start gap-2">
+                                    <span class="text-warning">✔</span>
+                                    <span><strong>Clear Conscience:</strong> Instant reconciliation of all advances and receipts.</span>
+                                </li>
+                                <li class="d-flex align-items-start gap-2">
+                                    <span class="text-warning">✔</span>
+                                    <span><strong>Multi-Center Access:</strong> Participate across multiple temples or ashrams.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="position-relative z-1 pt-3 border-top border-secondary-subtle">
+                            <div class="text-secondary" style="font-size: 0.78rem;">
+                                Sustained voluntarily through devotee donations.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Signup Form Panel -->
+                    <div class="col-md-7 p-4 p-lg-5 bg-dark d-flex flex-column justify-content-center">
+                        <div class="mb-4">
+                            <h3 class="text-light fw-bold mb-1">Create Account</h3>
+                            <p class="text-secondary small mb-0">
+                                Enter your details to begin transparent seva accounting.
+                            </p>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 small mb-3">
+                                {% for error in form.non_field_errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <form action="" method="post" novalidate>
+                            {% csrf_token %}
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="{{ form.first_name.id_for_label }}">First Name</label>
+                                    {{ form.first_name }}
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger small mt-1">{{ form.first_name.errors|striptags }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="{{ form.last_name.id_for_label }}">Last Name</label>
+                                    {{ form.last_name }}
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger small mt-1">{{ form.last_name.errors|striptags }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">{{ form.username.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ form.email.id_for_label }}">Email Address</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ form.email.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            {% for field in form %}
+                                {% if field.name in 'password1,password2' %}
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">{{ field.help_text|striptags }}</div>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                                    {% endif %}
+                                </div>
+                                {% elif field.is_hidden %}
+                                    {{ field }}
+                                {% endif %}
+                            {% endfor %}
+
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-gold py-2 fw-semibold">
+                                    Register Account →
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="mt-4 pt-3 border-top border-secondary-subtle text-center small text-secondary">
+                            Already have an account? 
+                            <a href="{% url 'login' %}" class="text-warning fw-semibold text-decoration-none">Sign In here</a>
+                        </div>
+                    </div>
                 </div>
-            </form>
-        </div>
-        <div class="card-footer border-secondary text-center text-muted py-3">
-            Already have an account? <a href="{% url 'login' %}" class="text-info">Log in here</a>
+            </div>
         </div>
     </div>
 </div>
-{% endblock content %}
+{% endblock main_layout %}

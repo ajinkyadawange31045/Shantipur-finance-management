@@ -1,11 +1,17 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-secondary">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="/">
-            <span class="text-warning">🏛️ Shantipur</span> Finance
+<nav class="navbar navbar-expand-lg site-navbar sticky-top py-2">
+    <div class="container-fluid px-lg-4">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+            <span class="fs-4">🏛️</span>
+            <div>
+                <span class="fw-bold font-cinzel text-light">Shantipur <span class="text-warning">Finance</span></span>
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle py-0 px-1 ms-1 d-none d-sm-inline" style="font-size: 0.65rem;">SEVA LEDGER</span>
+            </div>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+
+        <button class="navbar-toggler border-secondary text-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center">
                 <li class="nav-item">
@@ -35,13 +41,13 @@
                 </li>
                 {% endif %}
 
-                <!-- Centers Menu -->
+                <!-- Centers Menu for Authenticated Users -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="centersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Centers
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="centersDropdown">
-                        <li><a class="dropdown-item" href="{% url 'apply_center' %}">📝 Apply for Center</a></li>
+                    <ul class="dropdown-menu dropdown-menu-dark shadow border-secondary" aria-labelledby="centersDropdown">
+                        <li><a class="dropdown-item" href="{% url 'apply_center' %}">📝 Register New Center</a></li>
                         <li><a class="dropdown-item" href="{% url 'my_center_applications' %}">📋 My Applications</a></li>
                         {% if is_platform_admin %}
                         <li><hr class="dropdown-divider border-secondary"></li>
@@ -50,22 +56,26 @@
                     </ul>
                 </li>
                 {% endif %}
+
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'about' %}">Important</a>
+                    <a class="nav-link" href="{% url 'about' %}">Seva Ethics &amp; Rules</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}#donation-model">Donation Model</a>
                 </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto align-items-lg-center">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
                 {% if request.user.is_authenticated %}
                     <!-- Center Switcher / Indicator -->
                     {% if nav_user_centers %}
                         {% if nav_user_centers|length > 1 %}
-                        <li class="nav-item dropdown me-lg-2 my-1 my-lg-0">
-                            <a class="btn btn-sm btn-outline-info dropdown-toggle d-flex align-items-center" href="#" id="activeCenterDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <li class="nav-item dropdown my-1 my-lg-0">
+                            <a class="btn btn-sm btn-outline-info dropdown-toggle d-flex align-items-center rounded-pill px-3" href="#" id="activeCenterDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="me-1">🏛️</span>
-                                <span class="text-truncate" style="max-width: 170px;">{{ nav_active_center.name|default:"Switch Center" }}</span>
+                                <span class="text-truncate" style="max-width: 150px;">{{ nav_active_center.name|default:"Switch Center" }}</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" aria-labelledby="activeCenterDropdown">
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow border-secondary" aria-labelledby="activeCenterDropdown">
                                 <li class="dropdown-header text-muted small">Switch Active Center</li>
                                 {% for c in nav_user_centers %}
                                 <li>
@@ -80,18 +90,18 @@
                             </ul>
                         </li>
                         {% elif nav_active_center %}
-                        <li class="nav-item me-lg-2 my-1 my-lg-0">
-                            <span class="badge bg-secondary text-light py-2 px-3 border border-secondary d-inline-flex align-items-center" title="Active Center">
+                        <li class="nav-item my-1 my-lg-0">
+                            <span class="badge bg-dark text-light py-2 px-3 border border-secondary rounded-pill d-inline-flex align-items-center" title="Active Center">
                                 <span>🏛️ {{ nav_active_center.name }}</span>
                                 {% if nav_membership %}
-                                <span class="badge bg-dark ms-1 text-info">{{ nav_membership.get_role_display }}</span>
+                                <span class="badge bg-secondary ms-1 text-info">{{ nav_membership.get_role_display }}</span>
                                 {% endif %}
                             </span>
                         </li>
                         {% endif %}
                     {% else %}
-                        <li class="nav-item me-lg-2 my-1 my-lg-0">
-                            <a href="{% url 'apply_center' %}" class="badge bg-warning text-dark text-decoration-none py-2 px-3">
+                        <li class="nav-item my-1 my-lg-0">
+                            <a href="{% url 'apply_center' %}" class="badge bg-warning text-dark text-decoration-none py-2 px-3 rounded-pill">
                                 ⚠️ No Center Assigned
                             </a>
                         </li>
@@ -99,10 +109,11 @@
 
                     <!-- User Dropdown -->
                     <li class="nav-item dropdown my-1 my-lg-0">
-                        <a class="nav-link dropdown-toggle text-light" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            👤 {{ request.user.first_name|default:request.user.username }}
+                        <a class="nav-link dropdown-toggle text-light d-flex align-items-center gap-1" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="bg-secondary rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 28px; height: 28px; font-size: 0.85rem;">👤</span>
+                            <span>{{ request.user.first_name|default:request.user.username }}</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow border-secondary" aria-labelledby="userDropdown">
                             <li><span class="dropdown-item-text text-muted small">Signed in as <strong>{{ request.user.username }}</strong></span></li>
                             {% if is_platform_admin %}
                             <li><span class="dropdown-item-text text-warning small">🛡️ Platform Admin</span></li>
@@ -112,11 +123,16 @@
                         </ul>
                     </li>
                 {% else %}
+                    <!-- Pre-login visitor options -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="btn btn-sm btn-outline-light px-3 py-1 rounded-pill" href="{% url 'login' %}">
+                            Sign In
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'signup' %}">Signup</a>
+                        <a class="btn btn-sm btn-gold px-3 py-1 rounded-pill" href="{% url 'signup' %}">
+                            Get Started
+                        </a>
                     </li>
                 {% endif %}
             </ul>
